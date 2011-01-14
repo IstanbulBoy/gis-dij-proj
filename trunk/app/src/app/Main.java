@@ -1,5 +1,7 @@
 package app;
 
+import sndlib.core.network.Network;
+
 /**
  *
  * @author hmsck

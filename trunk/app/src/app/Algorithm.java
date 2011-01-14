@@ -19,8 +19,6 @@ public class Algorithm {
     }
 
     protected void setupCapacities(Network net, DemandMatrix capacityMatrix) {
-        Demand demand = null;
-        
         for (Link link : net.links()) {
             link.setPreCapacity(capacityMatrix.getDemand(link.getFirstNode(), link.getSecondNode()));
         }
@@ -34,6 +32,15 @@ public class Algorithm {
         int nodeCount = nodes.size();
         Dijkstra dijkstra = new Dijkstra(network);
         RoutingPath routes[][] = new RoutingPath[nodeCount][nodeCount];
+
+        DemandMatrix maxDemMatrix = demandMatrices.getMaxDemandMatrix();
+        for (Node firstNode : nodes) {
+                for (Node lastNode : nodes) {
+                    if (firstNode != lastNode) {
+                        path = dijkstra.findRoute(firstNode, lastNode, maxDemMatrix.getDemand(firstNode, lastNode));
+                    }
+                }
+            }
 
         for (DemandMatrix demandMatrix : demandMatrices.getMatrices()) {
             for (Node firstNode : nodes) {
