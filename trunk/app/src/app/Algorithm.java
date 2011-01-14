@@ -2,11 +2,10 @@ package app;
 
 import java.util.List;
 import java.util.Set;
-import sndlib.core.network.Demand;
 import sndlib.core.network.Link;
 import sndlib.core.network.Network;
 import sndlib.core.network.Node;
-import sndlib.core.problem.DemandFlow;
+import sndlib.core.problem.RoutingLink;
 import sndlib.core.problem.RoutingPath;
 
 /**
@@ -32,13 +31,15 @@ public class Algorithm {
         int nodeCount = nodes.size();
         Dijkstra dijkstra = new Dijkstra(network);
         RoutingPath routes[][] = new RoutingPath[nodeCount][nodeCount];
+        RoutingPath route = null;
 
         DemandMatrix maxDemMatrix = demandMatrices.getMaxDemandMatrix();
         for (Node firstNode : nodes) {
             nodes.remove(firstNode);
             if (!nodes.isEmpty()) {
                 for (Node secondNode : nodes) {
-                    dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
+                    routes[Integer.parseInt(firstNode.getId())][Integer.parseInt(secondNode.getId())] =
+                            dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
                 }
             }
         }
@@ -48,7 +49,16 @@ public class Algorithm {
                 nodes.remove(firstNode);
                 if (!nodes.isEmpty()) {
                     for (Node secondNode : nodes) {
-                        dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
+                        double demand = demandMatrix.getDemand(firstNode, secondNode);
+                        route = dijkstra.findRoute(firstNode, secondNode, demand);
+                        for (RoutingLink routingLink : route.routingLinks()) {
+                            Link link = routingLink.getLink();
+
+                            if (link.getPreCapacity() < demand) {
+                                /* fail */
+                            }
+                        }
+
                     }
                 }
             }
