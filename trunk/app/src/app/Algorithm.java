@@ -1,5 +1,6 @@
 package app;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import sndlib.core.network.Link;
@@ -35,6 +36,7 @@ public class Algorithm {
 
         setupCapacities(network, dm);
         DemandMatrix maxDemMatrix = demandMatrices.getMaxDemandMatrix();
+        /* sprawdzamy maksymalna macierz zapotrzebowan */
         for (Node firstNode : nodes) {
             nodes.remove(firstNode);
             if (!nodes.isEmpty()) {
@@ -45,23 +47,48 @@ public class Algorithm {
             }
         }
 
-        boolean fail = false;
+        Set<RoutingLink> failLinks = new HashSet<RoutingLink>();
+        /* sprawdzamy wszystkie macierze zapotrzebowan */
         for (DemandMatrix demandMatrix : demandMatrices.getMatrices()) {
             for (Node firstNode : nodes) {
+                /* aby nie wyszukac sciezki w druga strone */
                 nodes.remove(firstNode);
                 if (!nodes.isEmpty()) {
                     for (Node secondNode : nodes) {
+                        int i = Integer.parseInt(firstNode.getId());
+                        int j = Integer.parseInt(secondNode.getId());
                         double demand = demandMatrix.getDemand(firstNode, secondNode);
 
-                        for (RoutingLink routingLink : routes[Integer.parseInt(firstNode.getId())][Integer.parseInt(secondNode.getId())].routingLinks()) {
+                        for (RoutingLink routingLink : routes[i][j].routingLinks()) {
                             Link link = routingLink.getLink();
 
-                            fail = false;
+                            /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
                             if (link.getPreCapacity() < demand) {
-                                fail = true;
+                                failLinks.add(routingLink);
                             }
                         }
+                        if (!failLinks.isEmpty()) {
+                            /* sa przepelnione krawedzie.. kopiujemy siec i usuwamy te krawedzie*/
+                            Network tmpnet = network;
 
+                            /* usuwamy przepelnione krawedzie */
+                            for (RoutingLink rLink : failLinks) {
+                                tmpnet.removeLink(rLink.getLink());
+                            }
+                            failLinks.clear();
+
+                            /* szukamy nowego polaczenia */
+                            routes[i][j] =
+                                    dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
+                        } else {
+                            /* wszystkie krawedzie spelniaja zapotrzebowanie, wiec odejmujemy zapotrzebowania od nich */
+                            for (RoutingLink routingLink : routes[i][j].routingLinks()) {
+                                Link link = routingLink.getLink();
+
+                                /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
+                                link.setPreCapacity(link.getPreCapacity()-demand);
+                            }
+                        }
                     }
                 }
             }
