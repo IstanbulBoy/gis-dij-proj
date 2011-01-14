@@ -36,19 +36,21 @@ public class Algorithm {
         DemandMatrix maxDemMatrix = demandMatrices.getMaxDemandMatrix();
         for (Node firstNode : nodes) {
             nodes.remove(firstNode);
-            for (Node secondNode : nodes) {
-                dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
+            if (!nodes.isEmpty()) {
+                for (Node secondNode : nodes) {
+                    dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
+                }
             }
-
         }
 
         for (DemandMatrix demandMatrix : demandMatrices.getMatrices()) {
             for (Node firstNode : nodes) {
                 nodes.remove(firstNode);
-                for (Node secondNode : nodes) {
-                    dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
+                if (!nodes.isEmpty()) {
+                    for (Node secondNode : nodes) {
+                        dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
+                    }
                 }
-
             }
         }
         return null;
