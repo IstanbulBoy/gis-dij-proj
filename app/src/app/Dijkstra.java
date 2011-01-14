@@ -60,7 +60,7 @@ public class Dijkstra {
     		return null;
     	}
     	
-    	Builder builderFor = RoutingPath.getBuilderFor(LinkModel.DIRECTED, DemandModel.UNDIRECTED);
+    	Builder builderFor = RoutingPath.getBuilderFor(LinkModel.UNDIRECTED, DemandModel.UNDIRECTED);
     	LinkedList<Link> l = new LinkedList<Link>();
     	Node pathPartialEnd = last;
     	while(predecessorNode.containsKey(pathPartialEnd)){
