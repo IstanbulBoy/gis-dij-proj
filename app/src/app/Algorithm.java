@@ -41,8 +41,12 @@ public class Algorithm {
             nodes.remove(firstNode);
             if (!nodes.isEmpty()) {
                 for (Node secondNode : nodes) {
-                    routes[Integer.parseInt(firstNode.getId())][Integer.parseInt(secondNode.getId())] =
-                            dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
+                    route = dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
+                    if (route == null) {
+                        throw new Error("Nie znalazlem sciezki");
+                    } else {
+                        routes[Integer.parseInt(firstNode.getId())][Integer.parseInt(secondNode.getId())] = route;
+                    }
                 }
             }
         }
@@ -80,13 +84,17 @@ public class Algorithm {
                             /* szukamy nowego polaczenia */
                             routes[i][j] =
                                     dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
+                            if (routes[i][j] == null) {
+                                throw new Error("Nie znalazlem sciezki");
+                            }
+
                         } else {
                             /* wszystkie krawedzie spelniaja zapotrzebowanie, wiec odejmujemy zapotrzebowania od nich */
                             for (RoutingLink routingLink : routes[i][j].routingLinks()) {
                                 Link link = routingLink.getLink();
 
                                 /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
-                                link.setPreCapacity(link.getPreCapacity()-demand);
+                                link.setPreCapacity(link.getPreCapacity() - demand);
                             }
                         }
                     }
