@@ -22,9 +22,7 @@ public class Algorithm {
         Demand demand = null;
         
         for (Link link : net.links()) {
-            demand = net.newDemand(null, link.getFirstNode(), link.getSecondNode());
-
-            demand.setDemandValue(capacityMatrix.getDemand(link.getFirstNode(), link.getSecondNode()));
+            link.setPreCapacity(capacityMatrix.getDemand(link.getFirstNode(), link.getSecondNode()));
         }
     }
 
