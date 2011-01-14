@@ -25,19 +25,24 @@ public class DemandMatrix {
         }
     }
 
-    public Double getDemand(Node first, Node last) {
+    public Double getDemand(Node first, Node second) {
         int i, j;
 
         i = nodes.indexOf(first);
-        j = nodes.indexOf(last);
+        j = nodes.indexOf(second);
+//
+//        System.out.println(i);
+//        System.out.println(j);
+//        System.out.println(first);
+//        System.out.println(second);
 
         return matrix[i][j];
     }
 
-    public void addDemand(double demand, Node first, Node last) throws ArrayIndexOutOfBoundsException {
+    public void addDemand(double demand, Node first, Node second) throws ArrayIndexOutOfBoundsException {
         int i, j;
         i = addNode(first);
-        j = addNode(last);
+        j = addNode(second);
         matrix[i][j] = matrix[j][i] = demand;
         matrix[i][i] = matrix[j][j] = -1d;
     }
@@ -56,5 +61,16 @@ public class DemandMatrix {
 
     public Collection<Node> getNodes() {
         return nodes;
+    }
+
+    public void print() {
+        int i,j;
+        for (i=0; i < 5; i++) {
+            for (j=0; j < 5; j++) {
+                System.out.print(matrix[i][j]);
+                System.out.print("    ");
+            }
+            System.out.println();
+        }
     }
 }

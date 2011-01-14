@@ -1,6 +1,8 @@
 package app;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import sndlib.core.network.Link;
@@ -18,39 +20,77 @@ public class Algorithm {
     public Algorithm() {
     }
 
-    public static Set<RoutingPath> execute(Network net, DemandMatrices demandMatrices) throws Exception {
+    static public void printRoute(RoutingPath route) {
+        System.out.print(route.routingLinks().get(0).getSource().getId());
+        for (RoutingLink r : route.routingLinks()) {
+            System.out.print(":" + r.getTarget().getId());
+        }
+
+    }
+
+    public static RoutingPath[][] execute(Network net, DemandMatrices demandMatrices) throws Exception {
         Network network = net;
-        List<Node> nodes = (List) network.nodes();
-        int nodeCount = nodes.size();
+        List<Node> nodes = new ArrayList<Node>();
+
+        for (Node n : net.nodes()) {
+            nodes.add(n);
+        }
+
+        int nodeCount = net.nodeCount();
         RoutingPath routes[][] = new RoutingPath[nodeCount][nodeCount];
         RoutingPath route = null;
 
+        System.out.println("Szukam sciezki dla maksymalnych zapotrzebowan...");
         DemandMatrix maxDemMatrix = demandMatrices.getMaxDemandMatrix();
+
+        maxDemMatrix.print();
+
         /* sprawdzamy maksymalna macierz zapotrzebowan */
-        for (Node firstNode : nodes) {
-            nodes.remove(firstNode);
+        for (Iterator<Node> iterFirst = nodes.iterator(); iterFirst.hasNext();) {
+            Node firstNode = iterFirst.next();
+            System.out.println("[" + firstNode.getId() + "]");
+            iterFirst.remove();
+
             if (!nodes.isEmpty()) {
-                for (Node secondNode : nodes) {
+                for (Iterator<Node> iterSec = nodes.iterator(); iterSec.hasNext();) {
+                    Node secondNode = iterSec.next();
+                    if (firstNode == secondNode) {
+                        continue;
+                    }
+                    System.out.print("[" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + maxDemMatrix.getDemand(firstNode, secondNode) + "] ");
                     route = Dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode), network);
+
                     if (route == null) {
                         throw new Exception("Nie znalazlem sciezki");
                     } else {
-                        routes[Integer.parseInt(firstNode.getId())][Integer.parseInt(secondNode.getId())] = route;
+                        int i = Integer.parseInt(firstNode.getId());
+                        int j = Integer.parseInt(secondNode.getId());
+                        routes[i][j] = routes[j][i] = route;
+                        printRoute(route);
+                        System.out.println();
                     }
                 }
             }
+            System.out.println("[/" + firstNode.getId() + "]");
         }
 
+        System.out.println("Szukam sciezki dla reszty zapotrzebowan...");
         RoutingPath routesBackup[][] = routes;
         Set<RoutingLink> failLinks = new HashSet<RoutingLink>();
 
+        for (Node n : net.nodes()) {
+            nodes.add(n);
+        }
         /* sprawdzamy wszystkie macierze zapotrzebowan */
         for (DemandMatrix demandMatrix : demandMatrices.getMatrices()) {
-            for (Node firstNode : nodes) {
+            demandMatrix.print();
+            for (Iterator<Node> iterFirst = nodes.iterator(); iterFirst.hasNext();) {
+                Node firstNode = iterFirst.next();
                 /* aby nie wyszukac sciezki w druga strone */
-                nodes.remove(firstNode);
+                iterFirst.remove();
                 if (!nodes.isEmpty()) {
-                    for (Node secondNode : nodes) {
+                    for (Iterator<Node> iterSec = nodes.iterator(); iterSec.hasNext();) {
+                        Node secondNode = iterSec.next();
                         int i = Integer.parseInt(firstNode.getId());
                         int j = Integer.parseInt(secondNode.getId());
                         double demand = demandMatrix.getDemand(firstNode, secondNode);
@@ -73,9 +113,13 @@ public class Algorithm {
                             }
                             failLinks.clear();
 
+                            System.out.print("new path for [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + maxDemMatrix.getDemand(firstNode, secondNode) + "] ");
+
                             /* szukamy nowego polaczenia */
-                            routesBackup[i][j] = routes[i][j] =
-                                    Dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode), network);
+                            routesBackup[i][j] = routes[i][j] = routesBackup[j][i] = routes[j][i] =
+                                    Dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode), tmpnet);
+                            printRoute(routes[i][j]);
+                            System.out.println();
                             if (routes[i][j] == null) {
                                 throw new Exception("Nie znalazlem sciezki");
                             }
@@ -93,7 +137,8 @@ public class Algorithm {
             }
             routes = routesBackup;
         }
-        return null;
+
+        return routesBackup;
     }
 
     public void test() {

@@ -1,12 +1,9 @@
 package app;
 
-import sndlib.*;
-import sndlib.core.model.*;
 import sndlib.core.network.*;
 import sndlib.core.problem.*;
 import sndlib.core.problem.RoutingPath.*;
 import sndlib.core.problem.RoutingPath;
-import java.io.*;
 
 public class Klasa {
 
@@ -15,7 +12,7 @@ public class Klasa {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		// net wygl¹da tak:
+		// net wyglï¿½da tak:
 		//	  b
 		//	/   \
 		// a	 d
@@ -30,7 +27,7 @@ public class Klasa {
 		net.newNode("d");
 		//net.newNode("e");
 		//net.newNode("f");
-		net.newLink("1", net.getNode("b"), net.getNode("a")).setPreCost(1.0);
+		net.newLink("1", net.getNode("a"), net.getNode("b")).setPreCost(1.0);
 		net.newLink("2", net.getNode("a"), net.getNode("c")).setPreCost(3.0);
 		net.newLink("3", net.getNode("b"), net.getNode("d")).setPreCost(2.0);
 		net.newLink("4", net.getNode("c"), net.getNode("d")).setPreCost(4.0);
@@ -41,7 +38,7 @@ public class Klasa {
 		net.getLink("4").setPreCapacity(10.0);
 		
 		
-		RoutingPath r = Dijkstra.findRoute(net.getNode("a"), net.getNode("d"), 2.0, net);
+		RoutingPath r = Dijkstra.findRoute(net.getNode("a"), net.getNode("c"), 2.0, net);
 		System.out.print(r.routingLinks().get(0).getSource().getId());
 		for(RoutingLink rout:r.routingLinks())
 			System.out.print(":"+rout.getTarget().getId());

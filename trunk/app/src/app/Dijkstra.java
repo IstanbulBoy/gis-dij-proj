@@ -6,7 +6,6 @@ import sndlib.core.model.LinkModel;
 import sndlib.core.network.Network;
 import sndlib.core.network.Link;
 import sndlib.core.network.Node;
-import sndlib.core.problem.RoutingLink;
 import sndlib.core.problem.RoutingPath;
 import sndlib.core.problem.RoutingPath.Builder;
 import sndlib.core.util.NetworkUtils;
@@ -24,6 +23,10 @@ public class Dijkstra {
     
 
     public static RoutingPath findRoute(Node first, Node last, Double maxDemand, Network networkArg) {
+        priorities.clear();
+        predecessorLink.clear();
+        predecessorNode.clear();
+        
     	net = networkArg;
     	for(Node n: net.nodes()){
     		priorities.add(new ExtendedNode(n, n == first ? 0 : Double.MAX_VALUE));
