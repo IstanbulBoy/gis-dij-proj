@@ -5,10 +5,17 @@
 
 package app;
 
+import sndlib.core.network.Node;
+
 /**
  *
  * @author hmsck
  */
 public class Algorithm {
 
+    public Algorithm() {
+    }
+
+    public void test() {
+    }
 }
