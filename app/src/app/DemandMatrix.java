@@ -1,6 +1,8 @@
 package app;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import sndlib.core.network.Node;
 
@@ -45,5 +47,10 @@ public class DemandMatrix {
         } else {
             return nodes.indexOf(node);
         }
+    }
+
+    public Collection<Node> getNodes() {
+        List n = Arrays.asList(matrix[0]);
+        return n;
     }
 }

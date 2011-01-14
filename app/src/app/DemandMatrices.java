@@ -15,7 +15,6 @@ public class DemandMatrices {
     public DemandMatrices() {
     }
 
-    
     public void addDemandMatrix(DemandMatrix matrix) {
         matrices.add(matrix);
     }
@@ -34,5 +33,20 @@ public class DemandMatrices {
 
     public List<DemandMatrix> getMatrices() {
         return matrices;
+    }
+
+    public DemandMatrix getMaxDemandMatrix() {
+        DemandMatrix dm = new DemandMatrix();
+
+        if (!matrices.isEmpty()) {
+            List<Node> nodes = (List<Node>) matrices.get(0).getNodes();
+
+            for (Node first : nodes) {
+                for (Node second : nodes) {
+                    dm.addDemand(getMaxDemand(first, second), first, second);
+                }
+            }
+        }
+        return dm;
     }
 }
