@@ -18,23 +18,15 @@ public class Algorithm {
     public Algorithm() {
     }
 
-    protected void setupCapacities(Network net, DemandMatrix capacityMatrix) {
-        for (Link link : net.links()) {
-            link.setPreCapacity(capacityMatrix.getDemand(link.getFirstNode(), link.getSecondNode()));
-        }
-    }
-
-    public Set<RoutingPath> execute() {
-        DemandMatrix dm = new DemandMatrix();
-        DemandMatrices demandMatrices = new DemandMatrices();
-        Network network = new Network();
+    public static Set<RoutingPath> execute(Network net, DemandMatrices demandMatrices) throws Exception {
+        Network network = net;
         List<Node> nodes = (List) network.nodes();
         int nodeCount = nodes.size();
-        Dijkstra dijkstra = new Dijkstra(network);
         RoutingPath routes[][] = new RoutingPath[nodeCount][nodeCount];
+        Dijkstra dijkstra = null;
         RoutingPath route = null;
 
-        setupCapacities(network, dm);
+        
         DemandMatrix maxDemMatrix = demandMatrices.getMaxDemandMatrix();
         /* sprawdzamy maksymalna macierz zapotrzebowan */
         for (Node firstNode : nodes) {
@@ -43,7 +35,7 @@ public class Algorithm {
                 for (Node secondNode : nodes) {
                     route = dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
                     if (route == null) {
-                        throw new Error("Nie znalazlem sciezki");
+                        throw new Exception("Nie znalazlem sciezki");
                     } else {
                         routes[Integer.parseInt(firstNode.getId())][Integer.parseInt(secondNode.getId())] = route;
                     }
@@ -51,7 +43,9 @@ public class Algorithm {
             }
         }
 
+        RoutingPath routesBackup[][] = routes;
         Set<RoutingLink> failLinks = new HashSet<RoutingLink>();
+
         /* sprawdzamy wszystkie macierze zapotrzebowan */
         for (DemandMatrix demandMatrix : demandMatrices.getMatrices()) {
             for (Node firstNode : nodes) {
@@ -82,24 +76,24 @@ public class Algorithm {
                             failLinks.clear();
 
                             /* szukamy nowego polaczenia */
-                            routes[i][j] =
+                            routesBackup[i][j] = routes[i][j] =
                                     dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
                             if (routes[i][j] == null) {
-                                throw new Error("Nie znalazlem sciezki");
+                                throw new Exception("Nie znalazlem sciezki");
                             }
 
-                        } else {
-                            /* wszystkie krawedzie spelniaja zapotrzebowanie, wiec odejmujemy zapotrzebowania od nich */
-                            for (RoutingLink routingLink : routes[i][j].routingLinks()) {
-                                Link link = routingLink.getLink();
+                        }
+                        /* wszystkie krawedzie spelniaja zapotrzebowanie, wiec odejmujemy zapotrzebowania od nich */
+                        for (RoutingLink routingLink : routes[i][j].routingLinks()) {
+                            Link link = routingLink.getLink();
 
-                                /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
-                                link.setPreCapacity(link.getPreCapacity() - demand);
-                            }
+                            /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
+                            link.setPreCapacity(link.getPreCapacity() - demand);
                         }
                     }
                 }
             }
+            routes = routesBackup;
         }
         return null;
     }
