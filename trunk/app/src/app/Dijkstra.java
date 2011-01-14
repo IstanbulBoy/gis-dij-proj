@@ -16,15 +16,15 @@ import sndlib.core.util.NetworkUtils;
  * @author hmsck
  */
 public class Dijkstra {
-    Network net;
+    static Network net;
     //LinkedHashMap<Node, Integer> distances = new LinkedHashMap<Node, Integer>();
     static PriorityQueue<ExtendedNode> priorities = new PriorityQueue<ExtendedNode>();
     static HashMap<Node, Link> predecessorLink = new HashMap<Node, Link>();
     static HashMap<Node, Node> predecessorNode = new HashMap<Node, Node>();
     
 
-    public static RoutingPath findRoute(Node first, Node last, Double maxDemand, Network net) {
-    	
+    public static RoutingPath findRoute(Node first, Node last, Double maxDemand, Network networkArg) {
+    	net = networkArg;
     	for(Node n: net.nodes()){
     		priorities.add(new ExtendedNode(n, n == first ? 0 : Double.MAX_VALUE));
     	}
