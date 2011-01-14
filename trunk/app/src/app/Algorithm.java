@@ -33,6 +33,7 @@ public class Algorithm {
         RoutingPath routes[][] = new RoutingPath[nodeCount][nodeCount];
         RoutingPath route = null;
 
+        setupCapacities(network, dm);
         DemandMatrix maxDemMatrix = demandMatrices.getMaxDemandMatrix();
         for (Node firstNode : nodes) {
             nodes.remove(firstNode);
@@ -44,18 +45,20 @@ public class Algorithm {
             }
         }
 
+        boolean fail = false;
         for (DemandMatrix demandMatrix : demandMatrices.getMatrices()) {
             for (Node firstNode : nodes) {
                 nodes.remove(firstNode);
                 if (!nodes.isEmpty()) {
                     for (Node secondNode : nodes) {
                         double demand = demandMatrix.getDemand(firstNode, secondNode);
-                        route = dijkstra.findRoute(firstNode, secondNode, demand);
-                        for (RoutingLink routingLink : route.routingLinks()) {
+
+                        for (RoutingLink routingLink : routes[Integer.parseInt(firstNode.getId())][Integer.parseInt(secondNode.getId())].routingLinks()) {
                             Link link = routingLink.getLink();
 
+                            fail = false;
                             if (link.getPreCapacity() < demand) {
-                                /* fail */
+                                fail = true;
                             }
                         }
 
