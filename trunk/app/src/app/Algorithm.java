@@ -18,13 +18,13 @@ public class Algorithm {
     public Algorithm() {
     }
 
-    protected void setupDemands(Network net, DemandMatrix demandMatrix) {
+    protected void setupCapacities(Network net, DemandMatrix capacityMatrix) {
         Demand demand = null;
         
         for (Link link : net.links()) {
             demand = net.newDemand(null, link.getFirstNode(), link.getSecondNode());
 
-            demand.setDemandValue(demandMatrix.getDemand(link.getFirstNode(), link.getSecondNode()));
+            demand.setDemandValue(capacityMatrix.getDemand(link.getFirstNode(), link.getSecondNode()));
         }
     }
 
