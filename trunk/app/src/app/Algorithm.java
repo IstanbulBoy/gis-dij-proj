@@ -23,17 +23,15 @@ public class Algorithm {
         List<Node> nodes = (List) network.nodes();
         int nodeCount = nodes.size();
         RoutingPath routes[][] = new RoutingPath[nodeCount][nodeCount];
-        Dijkstra dijkstra = null;
         RoutingPath route = null;
 
-        
         DemandMatrix maxDemMatrix = demandMatrices.getMaxDemandMatrix();
         /* sprawdzamy maksymalna macierz zapotrzebowan */
         for (Node firstNode : nodes) {
             nodes.remove(firstNode);
             if (!nodes.isEmpty()) {
                 for (Node secondNode : nodes) {
-                    route = dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
+                    route = Dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode), network);
                     if (route == null) {
                         throw new Exception("Nie znalazlem sciezki");
                     } else {
@@ -77,7 +75,7 @@ public class Algorithm {
 
                             /* szukamy nowego polaczenia */
                             routesBackup[i][j] = routes[i][j] =
-                                    dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
+                                    Dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode), network);
                             if (routes[i][j] == null) {
                                 throw new Exception("Nie znalazlem sciezki");
                             }
