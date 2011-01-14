@@ -35,20 +35,20 @@ public class Algorithm {
 
         DemandMatrix maxDemMatrix = demandMatrices.getMaxDemandMatrix();
         for (Node firstNode : nodes) {
-                for (Node lastNode : nodes) {
-                    if (firstNode != lastNode) {
-                        path = dijkstra.findRoute(firstNode, lastNode, maxDemMatrix.getDemand(firstNode, lastNode));
-                    }
-                }
+            nodes.remove(firstNode);
+            for (Node secondNode : nodes) {
+                dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
             }
+
+        }
 
         for (DemandMatrix demandMatrix : demandMatrices.getMatrices()) {
             for (Node firstNode : nodes) {
-                for (Node lastNode : nodes) {
-                    if (firstNode != lastNode) {
-                        RoutingPath path = dijkstra.findRoute(firstNode, lastNode, demandMatrix.getDemand(firstNode, lastNode));
-                    }
+                nodes.remove(firstNode);
+                for (Node secondNode : nodes) {
+                    dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode));
                 }
+
             }
         }
         return null;
