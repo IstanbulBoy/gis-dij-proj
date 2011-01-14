@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package app;
 
 import java.util.ArrayList;
@@ -14,8 +10,12 @@ import sndlib.core.network.Node;
  */
 public class DemandMatrices {
 
-    public List<DemandMatrix> matrices = new ArrayList<DemandMatrix>();
+    protected List<DemandMatrix> matrices = new ArrayList<DemandMatrix>();
 
+    public DemandMatrices() {
+    }
+
+    
     public void addDemandMatrix(DemandMatrix matrix) {
         matrices.add(matrix);
     }
@@ -30,5 +30,9 @@ public class DemandMatrices {
         }
 
         return demand;
+    }
+
+    public List<DemandMatrix> getMatrices() {
+        return matrices;
     }
 }
