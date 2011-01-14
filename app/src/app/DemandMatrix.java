@@ -1,7 +1,6 @@
 package app;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import sndlib.core.network.Node;
@@ -17,7 +16,13 @@ public class DemandMatrix {
     protected List<Node> nodes = new ArrayList<Node>();
 
     public DemandMatrix() {
+        int i=0, j=0;
 
+        for (;i < MAX_NODES; i++) {
+            for (; j < MAX_NODES; j++) {
+                matrix[i][j] = -1;
+            }
+        }
     }
 
     public Double getDemand(Node first, Node last) {
@@ -50,7 +55,6 @@ public class DemandMatrix {
     }
 
     public Collection<Node> getNodes() {
-        List n = Arrays.asList(matrix[0]);
-        return n;
+        return nodes;
     }
 }
