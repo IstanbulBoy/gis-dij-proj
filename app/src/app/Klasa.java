@@ -1,3 +1,5 @@
+package app;
+
 import sndlib.*;
 import sndlib.core.model.*;
 import sndlib.core.network.*;
@@ -28,7 +30,7 @@ public class Klasa {
 		net.newNode("d");
 		//net.newNode("e");
 		//net.newNode("f");
-		net.newLink("1", net.getNode("a"), net.getNode("b")).setPreCost(1.0);
+		net.newLink("1", net.getNode("b"), net.getNode("a")).setPreCost(1.0);
 		net.newLink("2", net.getNode("a"), net.getNode("c")).setPreCost(3.0);
 		net.newLink("3", net.getNode("b"), net.getNode("d")).setPreCost(2.0);
 		net.newLink("4", net.getNode("c"), net.getNode("d")).setPreCost(4.0);
@@ -38,11 +40,31 @@ public class Klasa {
 		net.getLink("3").setPreCapacity(10.0);
 		net.getLink("4").setPreCapacity(10.0);
 		
-		Dijkstra d = new Dijkstra(net);
-		RoutingPath r = d.findRoute(net.getNode("a"), net.getNode("d"), 2.0);
+		
+		RoutingPath r = Dijkstra.findRoute(net.getNode("a"), net.getNode("d"), 2.0, net);
 		System.out.print(r.routingLinks().get(0).getSource().getId());
 		for(RoutingLink rout:r.routingLinks())
 			System.out.print(":"+rout.getTarget().getId());
+		
+		/*Network net2 = new Network();
+		net2.newNode("a");
+		net2.newNode("b");
+		net2.newNode("c");
+		net2.newNode("d");
+		//net.newNode("e");
+		//net.newNode("f");
+		net2.newLink("1", net.getNode("b"), net.getNode("a")).setPreCost(1.0);
+		net2.newLink("2", net.getNode("a"), net.getNode("c")).setPreCost(3.0);
+		net2.newLink("3", net.getNode("b"), net.getNode("d")).setPreCost(2.0);
+		net2.newLink("4", net.getNode("c"), net.getNode("d")).setPreCost(4.0);
+		
+		net2.getLink("1").setPreCapacity(10.0);
+		net2.getLink("2").setPreCapacity(10.0);
+		net2.getLink("3").setPreCapacity(10.0);
+		net2.getLink("4").setPreCapacity(10.0);*/
+		
+		
+		
 	}
 
 }

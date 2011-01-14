@@ -1,3 +1,5 @@
+package app;
+
 import sndlib.core.network.*;
 
 public class ExtendedNode implements Comparable<ExtendedNode> {

@@ -1,3 +1,5 @@
+package app;
+
 import java.util.*;
 import sndlib.core.model.DemandModel;
 import sndlib.core.model.LinkModel;
@@ -16,16 +18,12 @@ import sndlib.core.util.NetworkUtils;
 public class Dijkstra {
     Network net;
     //LinkedHashMap<Node, Integer> distances = new LinkedHashMap<Node, Integer>();
-    PriorityQueue<ExtendedNode> priorities = new PriorityQueue<ExtendedNode>();
-    HashMap<Node, Link> predecessorLink = new HashMap<Node, Link>();
-    HashMap<Node, Node> predecessorNode = new HashMap<Node, Node>();
+    static PriorityQueue<ExtendedNode> priorities = new PriorityQueue<ExtendedNode>();
+    static HashMap<Node, Link> predecessorLink = new HashMap<Node, Link>();
+    static HashMap<Node, Node> predecessorNode = new HashMap<Node, Node>();
     
-    Dijkstra(Network net) {
-        this.net = net;
-        
-    }
 
-    public RoutingPath findRoute(Node first, Node last, Double maxDemand) {
+    public static RoutingPath findRoute(Node first, Node last, Double maxDemand, Network net) {
     	
     	for(Node n: net.nodes()){
     		priorities.add(new ExtendedNode(n, n == first ? 0 : Double.MAX_VALUE));
@@ -73,19 +71,19 @@ public class Dijkstra {
         return path;
     }
     
-    boolean areBothNodesInQueue(Link l){
+    static boolean areBothNodesInQueue(Link l){
     	if(isInPriorityQueue(l.getFirstNode()) && isInPriorityQueue(l.getSecondNode()))
     		return true;
     	else return false;
     }
     
-    boolean isInPriorityQueue(Node n){
+    static boolean isInPriorityQueue(Node n){
     	for(ExtendedNode s:priorities)
     		if(s.getNode() == n)
     			return true;
     	return false;
     }
-    Double getDistFromQ(Node n){
+    static Double getDistFromQ(Node n){
     	for(ExtendedNode ex:priorities){
     		if(ex.getNode() == n)
     			return ex.getDistance();
@@ -93,7 +91,7 @@ public class Dijkstra {
     	return -Double.MAX_VALUE;
     }
     
-    void setDistInQ(Node n, Double distanceValue){
+    static void setDistInQ(Node n, Double distanceValue){
     	for(ExtendedNode ex:priorities){
     		if(ex.getNode() == n){
     			ex.setDistance(distanceValue);
