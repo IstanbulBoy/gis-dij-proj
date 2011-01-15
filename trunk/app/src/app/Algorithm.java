@@ -1,9 +1,11 @@
 package app;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import sndlib.core.network.Link;
 import sndlib.core.network.Network;
@@ -26,6 +28,16 @@ public class Algorithm {
             System.out.print(":" + r.getTarget().getId());
         }
 
+    }
+
+    static public void printGraph(Network network) {
+        System.out.println();
+        System.out.println("[ ====== GRAPH ====== ]");
+        for (Link link : network.links()) {
+            System.out.println("[" + link.getId() + "]: [" + link.getFirstNode().getId() + "] -> [" + link.getSecondNode().getId() + "] (" + link.getPreCapacity() + ")");
+        }
+        System.out.println("[ =================== ]");
+        System.out.println();
     }
 
     public static RoutingPath[][] execute(Network net, DemandMatrices demandMatrices) throws Exception {
@@ -93,7 +105,13 @@ public class Algorithm {
                         Node secondNode = iterSec.next();
                         int i = Integer.parseInt(firstNode.getId());
                         int j = Integer.parseInt(secondNode.getId());
+                        
+                        System.out.print("[" + firstNode.getId() + "] -> [" + secondNode.getId() + "] ");
+                        printRoute(routes[i][j]);
+                        System.out.println(" (" + maxDemMatrix.getDemand(firstNode, secondNode) + ") ");
+                        
                         double demand = demandMatrix.getDemand(firstNode, secondNode);
+
 
                         for (RoutingLink routingLink : routes[i][j].routingLinks()) {
                             Link link = routingLink.getLink();
@@ -104,26 +122,39 @@ public class Algorithm {
                             }
                         }
                         if (!failLinks.isEmpty()) {
-                            /* sa przepelnione krawedzie.. kopiujemy siec i usuwamy te krawedzie*/
-                            Network tmpnet = network;
+                            /* sa przepelnione krawedzie*/
+
+                            Map<String, Double> capacityBackup = new HashMap<String, Double>();
 
                             /* usuwamy przepelnione krawedzie */
                             for (RoutingLink rLink : failLinks) {
-                                tmpnet.removeLink(rLink.getLink());
+                                capacityBackup.put(rLink.getLink().getId(), rLink.getLink().getPreCapacity());
+                                network.getLink(rLink.getLink().getId()).setPreCapacity(0);
                             }
-                            failLinks.clear();
+                            for (RoutingLink rLink : failLinks) {
+                                System.out.println("Zeruje sciezke " + rLink.getLink().getId() + "[" + rLink.getLink().getFirstNode().getId() + "] -> [" + rLink.getLink().getSecondNode().getId() + "]");
+                                if (capacityBackup.get(rLink.getLink().getId()) == network.getLink(rLink.getLink().getId()).getPreCapacity()) {
+//                                    System.out.println("JESZCZE BARDZIEJ NIE UMIESZ JAVY! " + capacityBackup.get(rLink.getLink().getId()));
+//                                    return null;
+                                }
+                            }
 
                             System.out.print("new path for [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + maxDemMatrix.getDemand(firstNode, secondNode) + "] ");
 
                             /* szukamy nowego polaczenia */
                             routesBackup[i][j] = routes[i][j] = routesBackup[j][i] = routes[j][i] =
-                                    Dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode), tmpnet);
+                                    Dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode), network);
                             printRoute(routes[i][j]);
                             System.out.println();
                             if (routes[i][j] == null) {
                                 throw new Exception("Nie znalazlem sciezki");
                             }
 
+                            for (RoutingLink rLink : failLinks) {
+                                network.getLink(rLink.getLink().getId()).setPreCapacity(capacityBackup.get(rLink.getLink().getId()));
+                            }
+                            failLinks.clear();
+                            capacityBackup.clear();
                         }
                         /* wszystkie krawedzie spelniaja zapotrzebowanie, wiec odejmujemy zapotrzebowania od nich */
                         for (RoutingLink routingLink : routes[i][j].routingLinks()) {
@@ -132,6 +163,7 @@ public class Algorithm {
                             /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
                             link.setPreCapacity(link.getPreCapacity() - demand);
                         }
+                        printGraph(network);
                     }
                 }
             }
