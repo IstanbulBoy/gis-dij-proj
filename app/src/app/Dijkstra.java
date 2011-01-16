@@ -100,7 +100,9 @@ public class Dijkstra {
     static void setDistInQ(Node n, Double distanceValue){
     	for(ExtendedNode ex:priorities){
     		if(ex.getNode() == n){
+    			priorities.remove(ex);
     			ex.setDistance(distanceValue);
+    			priorities.add(ex);
     			return;
     		}
     	}
