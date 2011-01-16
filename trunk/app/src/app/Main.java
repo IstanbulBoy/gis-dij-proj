@@ -1,4 +1,4 @@
-//package app;
+package app;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,11 +28,11 @@ public class Main {
         Node n3 = net.newNode("2");
         Node n4 = net.newNode("3");
         Node n5 = net.newNode("4");
-        net.newLink("a", n1, n2).setPreCapacity(17d);
-        net.newLink("b", n1, n3).setPreCapacity(17d);
-        net.newLink("c", n4, n2).setPreCapacity(17d);
-        net.newLink("d", n4, n5).setPreCapacity(17d);
-        net.newLink("e", n3, n5).setPreCapacity(17d);
+        net.newLink("a", n1, n2).setPreCapacity(50d);
+        net.newLink("b", n1, n3).setPreCapacity(50d);
+        net.newLink("c", n4, n2).setPreCapacity(50d);
+        net.newLink("d", n4, n5).setPreCapacity(50d);
+        net.newLink("e", n3, n5).setPreCapacity(50d);
 
         dm = getdm(1d);
         for (Link link : net.links()) {
@@ -50,6 +50,7 @@ public class Main {
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
+        Algorithm.printResult();
     }
 
     public static DemandMatrix getdm(double demand) {
