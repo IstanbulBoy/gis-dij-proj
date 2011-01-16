@@ -23,60 +23,66 @@ public class Algorithm {
     public Algorithm() {
     }
 
-    static public void printRoute(RoutingPath route, PrintStream...printstream) {
-    	PrintStream ps = printstream.length == 0 ? System.out : printstream[0];
-    	
-        ps.print(route.routingLinks().get(0).getSource().getId());
-        for (RoutingLink r : route.routingLinks()) {
-            ps.print(":" + r.getTarget().getId());
-        }
+    static public void printRoute(RoutingPath route, PrintStream... printstream) {
+        PrintStream ps = printstream.length == 0 ? System.out : printstream[0];
 
+        if (route != null) {
+            ps.print(route.routingLinks().get(0).getSource().getId());
+            for (RoutingLink r : route.routingLinks()) {
+                ps.print(":" + r.getTarget().getId());
+
+            }
+        }
     }
 
-    static public void printGraph(Network network, PrintStream...printstream) {
+    static public void printGraph(Network network, PrintStream... printstream) {
         PrintStream ps = printstream.length == 0 ? System.out : printstream[0];
-    	
+
         ps.println();
         ps.println("[ ====== GRAPH ====== ]");
         for (Link link : network.links()) {
-        	ps.println("[" + link.getId() + "]: [" + link.getFirstNode().getId() + "] -> [" + link.getSecondNode().getId() + "] (" + link.getPreCapacity() + ")");
+            ps.println("[" + link.getId() + "]: [" + link.getFirstNode().getId() + "] -> [" + link.getSecondNode().getId() + "] (" + link.getPreCapacity() + ")");
         }
         ps.println("[ =================== ]");
         ps.println();
     }
-    
-    static public void printResult(PrintStream...printstream){
-    	PrintStream ps = printstream.length == 0 ? System.out : printstream[0];
-    	ps.print("OK: "+"(E,V)=("+network.nodeCount()+","+network.linkCount()+") , "+ solvingTime + "ms ");
-    	int routings=0;
-    	for(int i=0;i<routes.length;i++){
-    		for(int j=0;j<routes.length;j++){
-    			if(!(i==j || routes[i][j] == null || i>j))
-    				routings++;
-    		}
-    	}
-    		
-    	ps.println(", "+routings + " routings:");
-    	for(int i=0;i<routes.length;i++){
-    		for(int j=0;j<routes.length;j++){
-    			RoutingPath r = routes[i][j];
-    			if(i==j || r == null || i>j)
-    				continue;
-    			ps.print(r.getFirst().getSource().getId() + "->"+r.getLast().getTarget().getId());
-    			ps.print("[");
-    			printRoute(r, ps);
-    			ps.print("], ");
-    			ps.print("");
-    		}
-    	}
-    	ps.println();
+
+    static public void printResult(PrintStream... printstream) {
+        PrintStream ps = printstream.length == 0 ? System.out : printstream[0];
+        ps.print("OK: " + "(E,V)=(" + network.nodeCount() + "," + network.linkCount() + ") , " + solvingTime + "ms ");
+        int routings = 0;
+        for (int i = 0; i < routes.length; i++) {
+            for (int j = 0; j < routes.length; j++) {
+                if (!(i == j || routes[i][j] == null || i > j)) {
+                    routings++;
+                }
+            }
+        }
+
+        ps.println(", " + routings + " routings:");
+        for (int i = 0; i < routes.length; i++) {
+            for (int j = 0; j < routes.length; j++) {
+                RoutingPath r = routes[i][j];
+                if (i == j || r == null || i > j) {
+                    continue;
+                }
+                ps.print(r.getFirst().getSource().getId() + "->" + r.getLast().getTarget().getId());
+                ps.print("[");
+                printRoute(r, ps);
+                ps.print("], ");
+                ps.print("");
+            }
+        }
+        ps.println();
     }
 
     public static RoutingPath[][] execute(Network net, DemandMatrices demandMatrices) throws Exception {
-    	solvingTime=-1l;
-    	long programStart = System.currentTimeMillis();
-    	network = net;
+        solvingTime = -1l;
+        long programStart = System.currentTimeMillis();
+        network = net;
         List<Node> nodes = new ArrayList<Node>();
+        List<Node> nodesBackup = new ArrayList<Node>();
+        Map<String, Double> capacityBackup = new HashMap<String, Double>();
 
         for (Node n : net.nodes()) {
             nodes.add(n);
@@ -107,7 +113,7 @@ public class Algorithm {
                     route = Dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode), network);
 
                     if (route == null) {
-                    	//printGraph(net);
+                        //printGraph(net);
                         throw new Exception("Nie znalazlem sciezki");
                     } else {
                         int i = Integer.parseInt(firstNode.getId());
@@ -123,13 +129,18 @@ public class Algorithm {
 
         System.out.println("Szukam sciezki dla reszty zapotrzebowan...");
         RoutingPath routesBackup[][] = routes;
-        Set<RoutingLink> failLinks = new HashSet<RoutingLink>();
+        Set<Link> failLinks = new HashSet<Link>();
 
-        for (Node n : net.nodes()) {
-            nodes.add(n);
+        /* kopia sieci */
+        for (Link link : net.links()) {
+            capacityBackup.put(link.getId(), link.getPreCapacity());
         }
         /* sprawdzamy wszystkie macierze zapotrzebowan */
         for (DemandMatrix demandMatrix : demandMatrices.getMatrices()) {
+            nodes.clear();
+            for (Node n : net.nodes()) {
+                nodes.add(n);
+            }
             demandMatrix.print();
             for (Iterator<Node> iterFirst = nodes.iterator(); iterFirst.hasNext();) {
                 Node firstNode = iterFirst.next();
@@ -140,36 +151,34 @@ public class Algorithm {
                         Node secondNode = iterSec.next();
                         int i = Integer.parseInt(firstNode.getId());
                         int j = Integer.parseInt(secondNode.getId());
-                        
+
                         System.out.print("[" + firstNode.getId() + "] -> [" + secondNode.getId() + "] ");
                         printRoute(routes[i][j]);
                         System.out.println(" (" + maxDemMatrix.getDemand(firstNode, secondNode) + ") ");
-                        
-                        double demand = demandMatrix.getDemand(firstNode, secondNode);
 
+                        double demand = demandMatrix.getDemand(firstNode, secondNode);
 
                         for (RoutingLink routingLink : routes[i][j].routingLinks()) {
                             Link link = routingLink.getLink();
 
                             /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
                             if (link.getPreCapacity() < demand) {
-                                failLinks.add(routingLink);
+                                failLinks.add(routingLink.getLink());
                             }
                         }
                         if (!failLinks.isEmpty()) {
                             /* sa przepelnione krawedzie*/
 
-                            Map<String, Double> capacityBackup = new HashMap<String, Double>();
+                            Map<String, Double> capacityFailBackup = new HashMap<String, Double>();
 
                             /* usuwamy przepelnione krawedzie */
-                            for (RoutingLink rLink : failLinks) {
-                                capacityBackup.put(rLink.getLink().getId(), rLink.getLink().getPreCapacity());
-                                network.getLink(rLink.getLink().getId()).setPreCapacity(0);
+                            for (Link link : failLinks) {
+                                capacityFailBackup.put(link.getId(), link.getPreCapacity());
+                                network.getLink(link.getId()).setPreCapacity(0);
                             }
-                            for (RoutingLink rLink : failLinks) {
-                                System.out.println("Zeruje sciezke " + rLink.getLink().getId() + "[" + rLink.getLink().getFirstNode().getId() + "] -> [" + rLink.getLink().getSecondNode().getId() + "]");
-                                if (capacityBackup.get(rLink.getLink().getId()) == network.getLink(rLink.getLink().getId()).getPreCapacity()) {
-//                                    System.out.println("JESZCZE BARDZIEJ NIE UMIESZ JAVY! " + capacityBackup.get(rLink.getLink().getId()));
+                            for (Link link : failLinks) {
+                                System.out.println("Zeruje sciezke " + link.getId() + "[" + link.getFirstNode().getId() + "] -> [" + link.getSecondNode().getId() + "]");
+                                if (capacityFailBackup.get(link.getId()) == network.getLink(link.getId()).getPreCapacity()) {
 //                                    return null;
                                 }
                             }
@@ -187,11 +196,11 @@ public class Algorithm {
                                 throw new Exception("Nie znalazlem sciezki");
                             }
 
-                            for (RoutingLink rLink : failLinks) {
-                                network.getLink(rLink.getLink().getId()).setPreCapacity(capacityBackup.get(rLink.getLink().getId()));
+                            for (Link link : failLinks) {
+                                network.getLink(link.getId()).setPreCapacity(capacityFailBackup.get(link.getId()));
                             }
                             failLinks.clear();
-                            capacityBackup.clear();
+                            capacityFailBackup.clear();
                         }
                         /* wszystkie krawedzie spelniaja zapotrzebowanie, wiec odejmujemy zapotrzebowania od nich */
                         for (RoutingLink routingLink : routes[i][j].routingLinks()) {
@@ -202,6 +211,9 @@ public class Algorithm {
                         }
                         printGraph(network);
                     }
+                }
+                for (Link l : net.links()) {
+                    l.setPreCapacity(capacityBackup.get(l.getId()));
                 }
             }
             routes = routesBackup;
@@ -214,10 +226,8 @@ public class Algorithm {
     public void test() {
         Network network = new Network();
 
-
     }
-    
-    static Long solvingTime=-1l;
-    static Network network; 
+    static Long solvingTime = -1l;
+    static Network network;
     static RoutingPath[][] routes;
 }
