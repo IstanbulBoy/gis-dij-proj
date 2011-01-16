@@ -27,5 +27,8 @@ public class ExtendedNode implements Comparable<ExtendedNode> {
 		return this.distance.compareTo(node2.getDistance());
 			
 	}
+	public String toString(){
+		return node.getId()+"["+distance+"]";
+	}
 	
 }

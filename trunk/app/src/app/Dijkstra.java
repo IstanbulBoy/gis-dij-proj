@@ -23,6 +23,7 @@ public class Dijkstra {
     
 
     public static RoutingPath findRoute(Node first, Node last, Double maxDemand, Network networkArg) {
+    	//System.out.println("--findroute: first="+first.getId()+" last="+last.getId()+" net="+networkArg+"\n");
         priorities.clear();
         predecessorLink.clear();
         predecessorNode.clear();
@@ -35,8 +36,11 @@ public class Dijkstra {
     	
     	AlgDij:
     	while(!priorities.isEmpty()){
+    		//System.out.println("priorities:" + priorities);
     		Double currentDist = priorities.peek().getDistance();
     		Node start = priorities.peek().getNode();
+    		ExtendedNode exN = priorities.peek();
+    		//System.out.println("WYBÓR: node " + start.getId() + "["+currentDist+"]");
     		for(Link l: NetworkUtils.getIncidentLinks(start, net)){
     			if(areBothNodesInQueue(l) && l.getPreCapacity()>=maxDemand){
     				Node secondNode = l.getFirstNode() == start ? l.getSecondNode() : l.getFirstNode();
@@ -53,11 +57,10 @@ public class Dijkstra {
     				}
     			}
     		}
-    		priorities.remove();
+    		priorities.remove(exN);
     	}
     	if (!success){
     		//ERROR
-    		System.out.println("ERROR\n");
     		return null;
     	}
     	
