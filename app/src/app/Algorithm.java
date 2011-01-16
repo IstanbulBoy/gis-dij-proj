@@ -73,6 +73,7 @@ public class Algorithm {
                     route = Dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode), network);
 
                     if (route == null) {
+                    	//printGraph(net);
                         throw new Exception("Nie znalazlem sciezki");
                     } else {
                         int i = Integer.parseInt(firstNode.getId());
@@ -142,6 +143,8 @@ public class Algorithm {
                             System.out.print("new path for [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + maxDemMatrix.getDemand(firstNode, secondNode) + "] ");
 
                             /* szukamy nowego polaczenia */
+                            printGraph(network);
+                            //System.out.println("F:"+firstNode+" S:"+secondNode+"\nnet:"+network);
                             routesBackup[i][j] = routes[i][j] = routesBackup[j][i] = routes[j][i] =
                                     Dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode), network);
                             printRoute(routes[i][j]);

@@ -27,11 +27,12 @@ public class Main {
         Node n2 = net.newNode("1");
         Node n3 = net.newNode("2");
         Node n4 = net.newNode("3");
-//        Node n5 = net.newNode("4");
-        net.newLink("a", n1, n2).setPreCapacity(12d);
-        net.newLink("b", n1, n3).setPreCapacity(12d);
-        net.newLink("c", n4, n2).setPreCapacity(12d);
-        net.newLink("d", n4, n3).setPreCapacity(12d);
+        Node n5 = net.newNode("4");
+        net.newLink("a", n1, n2).setPreCapacity(17d);
+        net.newLink("b", n1, n3).setPreCapacity(17d);
+        net.newLink("c", n4, n2).setPreCapacity(17d);
+        net.newLink("d", n4, n5).setPreCapacity(17d);
+        net.newLink("e", n3, n5).setPreCapacity(17d);
 
         dm = getdm(1d);
         for (Link link : net.links()) {
