@@ -1,5 +1,6 @@
-//package app;
+package app;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,26 +23,59 @@ public class Algorithm {
     public Algorithm() {
     }
 
-    static public void printRoute(RoutingPath route) {
-        System.out.print(route.routingLinks().get(0).getSource().getId());
+    static public void printRoute(RoutingPath route, PrintStream...printstream) {
+    	PrintStream ps = printstream.length == 0 ? System.out : printstream[0];
+    	
+        ps.print(route.routingLinks().get(0).getSource().getId());
         for (RoutingLink r : route.routingLinks()) {
-            System.out.print(":" + r.getTarget().getId());
+            ps.print(":" + r.getTarget().getId());
         }
 
     }
 
-    static public void printGraph(Network network) {
-        System.out.println();
-        System.out.println("[ ====== GRAPH ====== ]");
+    static public void printGraph(Network network, PrintStream...printstream) {
+        PrintStream ps = printstream.length == 0 ? System.out : printstream[0];
+    	
+        ps.println();
+        ps.println("[ ====== GRAPH ====== ]");
         for (Link link : network.links()) {
-            System.out.println("[" + link.getId() + "]: [" + link.getFirstNode().getId() + "] -> [" + link.getSecondNode().getId() + "] (" + link.getPreCapacity() + ")");
+        	ps.println("[" + link.getId() + "]: [" + link.getFirstNode().getId() + "] -> [" + link.getSecondNode().getId() + "] (" + link.getPreCapacity() + ")");
         }
-        System.out.println("[ =================== ]");
-        System.out.println();
+        ps.println("[ =================== ]");
+        ps.println();
+    }
+    
+    static public void printResult(PrintStream...printstream){
+    	PrintStream ps = printstream.length == 0 ? System.out : printstream[0];
+    	ps.print("OK: "+"(E,V)=("+network.nodeCount()+","+network.linkCount()+") , "+ solvingTime + "ms ");
+    	int routings=0;
+    	for(int i=0;i<routes.length;i++){
+    		for(int j=0;j<routes.length;j++){
+    			if(!(i==j || routes[i][j] == null || i>j))
+    				routings++;
+    		}
+    	}
+    		
+    	ps.println(", "+routings + " routings:");
+    	for(int i=0;i<routes.length;i++){
+    		for(int j=0;j<routes.length;j++){
+    			RoutingPath r = routes[i][j];
+    			if(i==j || r == null || i>j)
+    				continue;
+    			ps.print(r.getFirst().getSource().getId() + "->"+r.getLast().getTarget().getId());
+    			ps.print("[");
+    			printRoute(r, ps);
+    			ps.print("], ");
+    			ps.print("");
+    		}
+    	}
+    	ps.println();
     }
 
     public static RoutingPath[][] execute(Network net, DemandMatrices demandMatrices) throws Exception {
-        Network network = net;
+    	solvingTime=-1l;
+    	long programStart = System.currentTimeMillis();
+    	network = net;
         List<Node> nodes = new ArrayList<Node>();
 
         for (Node n : net.nodes()) {
@@ -49,7 +83,7 @@ public class Algorithm {
         }
 
         int nodeCount = net.nodeCount();
-        RoutingPath routes[][] = new RoutingPath[nodeCount][nodeCount];
+        routes = new RoutingPath[nodeCount][nodeCount];
         RoutingPath route = null;
 
         System.out.println("Szukam sciezki dla maksymalnych zapotrzebowan...");
@@ -172,7 +206,8 @@ public class Algorithm {
             }
             routes = routesBackup;
         }
-
+        long programEnd = System.currentTimeMillis();
+        solvingTime = programEnd - programStart;
         return routesBackup;
     }
 
@@ -181,4 +216,8 @@ public class Algorithm {
 
 
     }
+    
+    static Long solvingTime=-1l;
+    static Network network; 
+    static RoutingPath[][] routes;
 }
