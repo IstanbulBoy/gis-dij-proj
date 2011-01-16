@@ -13,7 +13,7 @@ public class DemandMatrix {
 
     protected static int MAX_NODES = 100;
     protected double[][] matrix = new double[MAX_NODES][MAX_NODES];
-    protected List<Node> nodes = new ArrayList<Node>();
+    protected List<String> nodes = new ArrayList<String>();
 
     public DemandMatrix() {
         int i=0, j=0;
@@ -26,6 +26,10 @@ public class DemandMatrix {
     }
 
     public Double getDemand(Node first, Node second) {
+       return getDemand(first.getId(), second.getId());
+    }
+
+    public Double getDemand(String first, String second) {
         int i, j;
 
         i = nodes.indexOf(first);
@@ -47,7 +51,19 @@ public class DemandMatrix {
         matrix[i][i] = matrix[j][j] = -1d;
     }
 
+    public void addDemand(double demand, String first, String second) throws ArrayIndexOutOfBoundsException {
+        int i, j;
+        i = addNode(first);
+        j = addNode(second);
+        matrix[i][j] = matrix[j][i] = demand;
+        matrix[i][i] = matrix[j][j] = -1d;
+    }
+    
     protected int addNode(Node node) throws ArrayIndexOutOfBoundsException {
+        return addNode(node.getId());
+    }
+
+    protected int addNode(String node) throws ArrayIndexOutOfBoundsException {
         if (!nodes.contains(node)) {
             if (nodes.size() == MAX_NODES) {
                 throw new ArrayIndexOutOfBoundsException("Osiagnieto limit ilosci wezlow (" + MAX_NODES + ")");
@@ -59,7 +75,7 @@ public class DemandMatrix {
         }
     }
 
-    public Collection<Node> getNodes() {
+    public Collection<String> getNodes() {
         return nodes;
     }
 

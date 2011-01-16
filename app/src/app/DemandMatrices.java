@@ -1,4 +1,4 @@
-//package app;
+package app;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +31,18 @@ public class DemandMatrices {
         return demand;
     }
 
+    public double getMaxDemand(String first, String last) {
+        double demand = -1d;
+
+        for (DemandMatrix matrix : matrices) {
+            if (matrix.getDemand(first, last) > demand) {
+                demand = matrix.getDemand(first, last);
+            }
+        }
+
+        return demand;
+    }
+
     public List<DemandMatrix> getMatrices() {
         return matrices;
     }
@@ -39,10 +51,10 @@ public class DemandMatrices {
         DemandMatrix dm = new DemandMatrix();
 
         if (!matrices.isEmpty()) {
-            List<Node> nodes = (List<Node>) matrices.get(0).getNodes();
+            List<String> nodes = (List<String>) matrices.get(0).getNodes();
 
-            for (Node first : nodes) {
-                for (Node second : nodes) {
+            for (String first : nodes) {
+                for (String second : nodes) {
                     dm.addDemand(getMaxDemand(first, second), first, second);
                 }
             }
