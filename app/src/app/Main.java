@@ -60,7 +60,6 @@ public class Main {
 //            Algorithm.printResult();
 //        }
 //    }
-
     public static DemandMatrix getdm(double demand) {
         DemandMatrix dm = new DemandMatrix();
 
@@ -97,12 +96,14 @@ public class Main {
         DemandMatrices dms = new DemandMatrices();
 
         try {
-            loadConfig("config.txt", net, dms);
+            loadConfig("config.txt", net, dms, true);
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        
+        dms = ProblemGenerator.genDemandMatrices(net, 100, 1.0, 10.0);
+        ProblemGenerator.genNetwork(net, dms);
+
         try {
             RoutingPath[][] routes = Algorithm.execute(net, dms);
         } catch (Exception ex) {
@@ -115,8 +116,7 @@ public class Main {
 //	Algorithm.printGraph(GraphGenerator.generate(20, 0.1, 20, 30)); //GraphGenerator.generate(10, 0.1);
 //}
 
-    
-    static public void loadConfig(String filename, Network network, DemandMatrices matrices) throws Exception {
+    static public void loadConfig(String filename, Network network, DemandMatrices matrices, boolean onlyGraph) throws Exception {
         FileReader fr = null;
         try {
             fr = new FileReader(filename);
@@ -173,7 +173,10 @@ public class Main {
                                 break;
                             case MATRIX:
                                 tmpn = network.nodeCount() + 1;
-
+                                if (onlyGraph) {
+                                    break;
+                                }
+                                
                                 if (!blockend) {
                                     lines += line + '\n';
                                 } else {
