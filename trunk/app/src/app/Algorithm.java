@@ -117,7 +117,7 @@ public class Algorithm {
                     route = Dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode), network);
 
                     if (route == null) {
-                        //printGraph(net);
+                        printGraph(net);
                         throw new Exception("Nie znalazlem sciezki");
                     } else {
                         int i = Integer.parseInt(firstNode.getId());
