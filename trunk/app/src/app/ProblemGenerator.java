@@ -4,6 +4,7 @@
  */
 package app;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -84,7 +85,9 @@ public class ProblemGenerator {
 
                         for (RoutingLink routingLink : routes[i][j].routingLinks()) {
                             Link link = routingLink.getLink();
-                            capacityBackup[matrixCounter].put(link.getId(), capacityBackup[matrixCounter].get(link.getId()) + demand);
+                            BigDecimal bd = new BigDecimal(capacityBackup[matrixCounter].get(link.getId()) + demand);
+                            bd = bd.setScale(2, BigDecimal.ROUND_UP);
+                            capacityBackup[matrixCounter].put(link.getId(), bd.doubleValue());
                         }
                     }
                 }
@@ -115,7 +118,11 @@ public class ProblemGenerator {
             DemandMatrix m = new DemandMatrix();
             for (Node n1 : network.nodes()) {
                 for (Node n2 : network.nodes()) {
-                    m.addDemand((Math.random() * val) + minValue, n1, n2);
+                    BigDecimal bd = new BigDecimal((Math.random() * val) + minValue);
+//                    Double v = ;
+//                    Math.
+                    bd = bd.setScale(2, BigDecimal.ROUND_UP);
+                    m.addDemand(bd.doubleValue(), n1, n2);
                 }
             }
             dms.addDemandMatrix(m);

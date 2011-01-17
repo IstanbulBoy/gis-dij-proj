@@ -94,14 +94,14 @@ public class Main {
 
     public static void main(String[] args) {
         DemandMatrices dms = new DemandMatrices();
-
+        
         try {
             loadConfig("config.txt", net, dms, true);
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        dms = ProblemGenerator.genDemandMatrices(net, 100, 1.0, 10.0);
+        dms = ProblemGenerator.genDemandMatrices(net, 2, 1.0, 10.0);
         ProblemGenerator.genNetwork(net, dms);
 
         try {

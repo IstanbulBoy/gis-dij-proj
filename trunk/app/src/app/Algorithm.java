@@ -1,6 +1,7 @@
 package app;
 
 import java.io.PrintStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -87,6 +88,7 @@ public class Algorithm {
         List<Node> nodes = new ArrayList<Node>();
         List<Node> nodesBackup = new ArrayList<Node>();
         Map<String, Double> capacityBackup = new HashMap<String, Double>();
+        int matrixCounter = 0;
 
         for (Node n : net.nodes()) {
             nodes.add(n);
@@ -139,8 +141,10 @@ public class Algorithm {
         for (Link link : net.links()) {
             capacityBackup.put(link.getId(), link.getPreCapacity());
         }
+        matrixCounter = 0;
         /* sprawdzamy wszystkie macierze zapotrzebowan */
         for (DemandMatrix demandMatrix : demandMatrices.getMatrices()) {
+            matrixCounter++;
             nodes.clear();
             for (Node n : net.nodes()) {
                 nodes.add(n);
@@ -211,7 +215,9 @@ public class Algorithm {
                             Link link = routingLink.getLink();
 
                             /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
-                            link.setPreCapacity(link.getPreCapacity() - demand);
+                            BigDecimal bd = new BigDecimal(link.getPreCapacity() - demand);
+                            bd = bd.setScale(2, BigDecimal.ROUND_UP);
+                            link.setPreCapacity(bd.doubleValue());
                         }
                         printGraph(network);
                     }
