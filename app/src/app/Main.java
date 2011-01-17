@@ -101,8 +101,8 @@ public class Main {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        dms = ProblemGenerator.genDemandMatrices(net, 2, 1.0, 10.0);
-        ProblemGenerator.genNetwork(net, dms);
+        dms = ProblemGenerator.genDemandMatrices(net, 100, 1.0, 10.0);
+        ProblemGenerator.genNetwork(net, dms.getRandMatrices(20));
 
         try {
             RoutingPath[][] routes = Algorithm.execute(net, dms);

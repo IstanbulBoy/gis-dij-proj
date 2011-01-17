@@ -147,6 +147,9 @@ public class Algorithm {
             capacityBackup.put(link.getId(), link.getPreCapacity());
         }
         matrixCounter = 0;
+        int new_path_counter = 0;
+        int break_counter = 0;
+        boolean break_matrix = false;
         /* sprawdzamy wszystkie macierze zapotrzebowan */
         for (DemandMatrix demandMatrix : demandMatrices.getMatrices()) {
             matrixCounter++;
@@ -156,6 +159,7 @@ public class Algorithm {
             }
             demandMatrix.print();
             for (Iterator<Node> iterFirst = nodes.iterator(); iterFirst.hasNext();) {
+                break_matrix = false;
                 Node firstNode = iterFirst.next();
                 /* aby nie wyszukac sciezki w druga strone */
                 iterFirst.remove();
@@ -180,6 +184,7 @@ public class Algorithm {
                             }
                         }
                         if (!failLinks.isEmpty()) {
+                           
                             /* sa przepelnione krawedzie*/
 
                             Map<String, Double> capacityFailBackup = new HashMap<String, Double>();
@@ -189,6 +194,7 @@ public class Algorithm {
                                 capacityFailBackup.put(link.getId(), link.getPreCapacity());
                                 network.getLink(link.getId()).setPreCapacity(0);
                             }
+
                             for (Link link : failLinks) {
                                 System.out.println("Zeruje sciezke " + link.getId() + "[" + link.getFirstNode().getId() + "] -> [" + link.getSecondNode().getId() + "]");
                                 if (capacityFailBackup.get(link.getId()) == network.getLink(link.getId()).getPreCapacity()) {
@@ -201,13 +207,18 @@ public class Algorithm {
                             /* szukamy nowego polaczenia */
                             printGraph(network);
                             //System.out.println("F:"+firstNode+" S:"+secondNode+"\nnet:"+network);
-                            routesBackup[i][j] = routes[i][j] = routesBackup[j][i] = routes[j][i] =
-                                    Dijkstra.findRoute(firstNode, secondNode, demandMatrix.getDemand(firstNode, secondNode), network);
+                            route = Dijkstra.findRoute(firstNode, secondNode, demandMatrix.getDemand(firstNode, secondNode), network);
                             printRoute(routes[i][j]);
                             System.out.println();
-                            if (routes[i][j] == null) {
-                                throw new Exception("Nie znalazlem sciezki");
+                            if (route == null) {
+//                                throw new Exception("Nie znalazlem sciezki");
+                                break_matrix = true;
+                                break_counter++;
+                                break;
                             }
+                             new_path_counter++;
+                            routes[i][j] = routes[j][i] = route;
+                            routesBackup[i][j] = routesBackup[j][i] = routes[i][j];
 
                             for (Link link : failLinks) {
                                 network.getLink(link.getId()).setPreCapacity(capacityFailBackup.get(link.getId()));
@@ -226,6 +237,9 @@ public class Algorithm {
                         }
                         printGraph(network);
                     }
+                    if (break_matrix) {
+                        break;
+                    }
                 }
             }
             for (Link l : net.links()) {
@@ -235,6 +249,8 @@ public class Algorithm {
         }
         long programEnd = System.currentTimeMillis();
         solvingTime = programEnd - programStart;
+
+        System.out.println("nowe sciezki: " + new_path_counter + "\n przerwalem: " + break_counter);
         return routesBackup;
     }
 }
