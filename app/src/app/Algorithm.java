@@ -159,7 +159,8 @@ public class Algorithm {
             capacityBackup.put(link.getId(), link.getPreCapacity());
         }
         matrixCounter = 0;
-        int new_path_counter = 0;
+        int new_path_counter_local = 0;
+        int new_path_counter_global = 0;
         int break_counter = 0;
         boolean break_matrix = false;
         /* sprawdzamy wszystkie macierze zapotrzebowan */
@@ -236,10 +237,10 @@ public class Algorithm {
                                 break_matrix = true;
                                 failLinks.clear();
                                 break_counter++;
+                                new_path_counter_local=0;
                                 break;
                             }
-
-                            new_path_counter++;
+                            new_path_counter_local++;
                             routes[i][j] = routes[j][i] = route;
                         }
 
@@ -265,13 +266,15 @@ public class Algorithm {
             if (break_matrix) {
                 cloneRoutingTable(routesBackup, routes);
             } else {
+                new_path_counter_global += new_path_counter_local;
                 cloneRoutingTable(routes, routesBackup);
             }
+            new_path_counter_local = 0;
         }
         long programEnd = System.currentTimeMillis();
         solvingTime = programEnd - programStart;
 
-        System.out.println("nowe sciezki: " + new_path_counter + "\n przerwalem: " + break_counter + "\n dla ilosci macierzy: " + matrixCounter);
+        System.out.println("nowe sciezki: " + new_path_counter_global + "\n przerwalem: " + break_counter + "\n dla ilosci macierzy: " + matrixCounter);
         return routesBackup;
     }
 }
