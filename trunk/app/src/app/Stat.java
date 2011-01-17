@@ -1,4 +1,4 @@
-//package app;
+package app;
 
 import java.io.PrintStream;
 import java.util.HashMap;
