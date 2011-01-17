@@ -34,11 +34,6 @@ public class DemandMatrix {
 
         i = nodes.indexOf(first);
         j = nodes.indexOf(second);
-//
-//        System.out.println(i);
-//        System.out.println(j);
-//        System.out.println(first);
-//        System.out.println(second);
 
         return matrix[i][j];
     }

@@ -20,6 +20,10 @@ import sndlib.core.problem.RoutingPath;
  */
 public class Algorithm {
 
+    static Long solvingTime = -1l;
+    static Network network;
+    static RoutingPath[][] routes;
+
     public Algorithm() {
     }
 
@@ -154,7 +158,7 @@ public class Algorithm {
 
                         System.out.print("[" + firstNode.getId() + "] -> [" + secondNode.getId() + "] ");
                         printRoute(routes[i][j]);
-                        System.out.println(" (" + maxDemMatrix.getDemand(firstNode, secondNode) + ") ");
+                        System.out.println(" (" + demandMatrix.getDemand(firstNode, secondNode) + ") ");
 
                         double demand = demandMatrix.getDemand(firstNode, secondNode);
 
@@ -183,13 +187,13 @@ public class Algorithm {
                                 }
                             }
 
-                            System.out.print("new path for [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + maxDemMatrix.getDemand(firstNode, secondNode) + "] ");
+                            System.out.print("new path for [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + demandMatrix.getDemand(firstNode, secondNode) + "] ");
 
                             /* szukamy nowego polaczenia */
                             printGraph(network);
                             //System.out.println("F:"+firstNode+" S:"+secondNode+"\nnet:"+network);
                             routesBackup[i][j] = routes[i][j] = routesBackup[j][i] = routes[j][i] =
-                                    Dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode), network);
+                                    Dijkstra.findRoute(firstNode, secondNode, demandMatrix.getDemand(firstNode, secondNode), network);
                             printRoute(routes[i][j]);
                             System.out.println();
                             if (routes[i][j] == null) {
@@ -212,9 +216,9 @@ public class Algorithm {
                         printGraph(network);
                     }
                 }
-                for (Link l : net.links()) {
-                    l.setPreCapacity(capacityBackup.get(l.getId()));
-                }
+            }
+            for (Link l : net.links()) {
+                l.setPreCapacity(capacityBackup.get(l.getId()));
             }
             routes = routesBackup;
         }
@@ -222,12 +226,4 @@ public class Algorithm {
         solvingTime = programEnd - programStart;
         return routesBackup;
     }
-
-    public void test() {
-        Network network = new Network();
-
-    }
-    static Long solvingTime = -1l;
-    static Network network;
-    static RoutingPath[][] routes;
 }
