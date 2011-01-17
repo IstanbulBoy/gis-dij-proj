@@ -119,8 +119,6 @@ public class ProblemGenerator {
             for (Node n1 : network.nodes()) {
                 for (Node n2 : network.nodes()) {
                     BigDecimal bd = new BigDecimal((Math.random() * val) + minValue);
-//                    Double v = ;
-//                    Math.
                     bd = bd.setScale(2, BigDecimal.ROUND_UP);
                     m.addDemand(bd.doubleValue(), n1, n2);
                 }
