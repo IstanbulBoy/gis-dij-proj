@@ -1,7 +1,10 @@
 package app;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import sndlib.core.network.Node;
 
 /**
@@ -60,5 +63,28 @@ public class DemandMatrices {
             }
         }
         return dm;
+    }
+
+    public Set<DemandMatrix> getRandMatrices(int count) {
+        HashSet<DemandMatrix> randomMatrices = new HashSet<DemandMatrix>();
+        Random gen = new Random();
+        Set<Integer> nums = new HashSet<Integer>();
+        Integer num;
+
+        while (count-- > 0) {
+            num = gen.nextInt(matrices.size());
+            while (nums.contains(num)) {
+                num = gen.nextInt(matrices.size());
+            }
+            nums.add(num);
+
+            randomMatrices.add(matrices.get(num.intValue()));
+        }
+
+        return randomMatrices;
+    }
+
+    public int countMatrices() {
+        return matrices.size();
     }
 }

@@ -19,6 +19,11 @@ public class Main {
 
     static Network net = new Network();
 
+    enum BlockType {
+
+        NONE, GRAPH, MATRIX
+    };
+
     /**
      * @param args the command line arguments
      */
@@ -103,11 +108,6 @@ public class Main {
 //            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //    }
-    enum BlockType {
-
-        NONE, GRAPH, MATRIX
-    };
-
     static public void loadConfig(String filename, Network network, DemandMatrices matrices) throws Exception {
         FileReader fr = null;
         try {
