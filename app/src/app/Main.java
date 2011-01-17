@@ -27,39 +27,39 @@ public class Main {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        System.out.println("Main");
-        DemandMatrix dm = null;
-        DemandMatrices dms = new DemandMatrices();
-        Node n1 = net.newNode("0");
-        Node n2 = net.newNode("1");
-        Node n3 = net.newNode("2");
-        Node n4 = net.newNode("3");
-        Node n5 = net.newNode("4");
-        net.newLink("a", n1, n2).setPreCapacity(50d);
-        net.newLink("b", n1, n3).setPreCapacity(50d);
-        net.newLink("c", n4, n2).setPreCapacity(50d);
-        net.newLink("d", n4, n5).setPreCapacity(50d);
-        net.newLink("e", n3, n5).setPreCapacity(50d);
-
-        dm = getdm(1d);
-        for (Link link : net.links()) {
-            link.setPreCost(dm.getDemand(link.getFirstNode(), link.getSecondNode()));
-        }
-
-        dms.addDemandMatrix(getdm(5d));
-        dms.addDemandMatrix(getdm(2d));
-        dms.addDemandMatrix(getdm(3d));
-        dms.addDemandMatrix(getdm(4d));
-        dms.addDemandMatrix(getdm(5d));
-
-        try {
-            RoutingPath[][] routes = Algorithm.execute(net, dms);
-        } catch (Exception ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            Algorithm.printResult();
-        }
-    }
+//    public static void main(String[] args) {
+//        System.out.println("Main");
+//        DemandMatrix dm = null;
+//        DemandMatrices dms = new DemandMatrices();
+//        Node n1 = net.newNode("0");
+//        Node n2 = net.newNode("1");
+//        Node n3 = net.newNode("2");
+//        Node n4 = net.newNode("3");
+//        Node n5 = net.newNode("4");
+//        net.newLink("a", n1, n2).setPreCapacity(50d);
+//        net.newLink("b", n1, n3).setPreCapacity(50d);
+//        net.newLink("c", n4, n2).setPreCapacity(50d);
+//        net.newLink("d", n4, n5).setPreCapacity(50d);
+//        net.newLink("e", n3, n5).setPreCapacity(50d);
+//
+//        dm = getdm(1d);
+//        for (Link link : net.links()) {
+//            link.setPreCost(dm.getDemand(link.getFirstNode(), link.getSecondNode()));
+//        }
+//
+//        dms.addDemandMatrix(getdm(5d));
+//        dms.addDemandMatrix(getdm(2d));
+//        dms.addDemandMatrix(getdm(3d));
+//        dms.addDemandMatrix(getdm(4d));
+//        dms.addDemandMatrix(getdm(5d));
+//
+//        try {
+//            RoutingPath[][] routes = Algorithm.execute(net, dms);
+//        } catch (Exception ex) {
+//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+//            Algorithm.printResult();
+//        }
+//    }
 
     public static DemandMatrix getdm(double demand) {
         DemandMatrix dm = new DemandMatrix();
@@ -93,21 +93,24 @@ public class Main {
         return dm;
     }
 
-//    public static void main(String[] args) {
-//        DemandMatrices dms = new DemandMatrices();
-//
-//        try {
-//            loadConfig("config.txt", net, dms);
-//        } catch (Exception ex) {
-//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        try {
-//            RoutingPath[][] routes = Algorithm.execute(net, dms);
-//        } catch (Exception ex) {
-//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
+    public static void main(String[] args) {
+        DemandMatrices dms = new DemandMatrices();
+
+        try {
+            loadConfig("config.txt", net, dms);
+        } catch (Exception ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        
+        try {
+            RoutingPath[][] routes = Algorithm.execute(net, dms);
+        } catch (Exception ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    
     static public void loadConfig(String filename, Network network, DemandMatrices matrices) throws Exception {
         FileReader fr = null;
         try {

@@ -17,15 +17,9 @@ import sndlib.core.problem.RoutingPath;
  *
  * @author hmsck
  */
-public class ProblemPreparator {
+public class ProblemGenerator {
 
-    public DemandMatrices genMatrices() {
-        DemandMatrices dms = new DemandMatrices();
-
-        return dms;
-    }
-
-    public void genNetwork(Network network, DemandMatrices demandMatrices) {
+    public static  void genNetwork(Network network, DemandMatrices demandMatrices) {
         List<Node> nodes = new ArrayList<Node>();
         RoutingPath routes[][] = new RoutingPath[network.nodeCount()][network.nodeCount()];
 
@@ -70,10 +64,9 @@ public class ProblemPreparator {
         }
     }
 
-    public DemandMatrices genDemandMatrices(Network network, int matricesCount, double minValue, double maxValue) {
+    public static DemandMatrices genDemandMatrices(Network network, int matricesCount, double minValue, double maxValue) {
         DemandMatrices dms = new DemandMatrices();
         double val = maxValue - minValue;
-
 
         while (matricesCount-- > 0) {
             DemandMatrix m = new DemandMatrix();
