@@ -109,6 +109,11 @@ public class Main {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+//  public static void main(String[] args) {
+//	System.out.println("Graf:\n");
+//	Algorithm.printGraph(GraphGenerator.generate(20, 0.1, 20, 30)); //GraphGenerator.generate(10, 0.1);
+//}
 
     
     static public void loadConfig(String filename, Network network, DemandMatrices matrices) throws Exception {
