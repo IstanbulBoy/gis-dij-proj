@@ -80,6 +80,11 @@ public class Algorithm {
         }
         ps.println();
     }
+    
+    static public void printStatsToFile(PrintStream... printstream) {
+    	PrintStream ps = printstream.length == 0 ? System.out : printstream[0];
+    	ps.println(network.nodeCount() + '\t' + network.linkCount() + '\t' + solvingTime);
+    }
 
     public static RoutingPath[][] execute(Network net, DemandMatrices demandMatrices) throws Exception {
         solvingTime = -1l;
