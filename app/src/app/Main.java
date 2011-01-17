@@ -94,7 +94,7 @@ public class Main {
 
     public static void main(String[] args) {
         DemandMatrices dms = new DemandMatrices();
-        
+        int i = 100;
         try {
             loadConfig("config.txt", net, dms, true);
         } catch (Exception ex) {
@@ -102,20 +102,24 @@ public class Main {
         }
 
         dms = ProblemGenerator.genDemandMatrices(net, 100, 1.0, 10.0);
-        ProblemGenerator.genNetwork(net, dms.getRandMatrices(20));
+        DemandMatrices dms1 = dms.getRandMatrices(50);
+        ProblemGenerator.genNetwork(net, dms1);
 
         try {
-            RoutingPath[][] routes = Algorithm.execute(net, dms);
+            if (Algorithm.execute(net, dms) == null) {
+                System.out.println(i);
+                return;
+            }
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
-    
+
 //  public static void main(String[] args) {
 //	System.out.println("Graf:\n");
 //	Algorithm.printGraph(GraphGenerator.generate(20, 0.1, 20, 30)); //GraphGenerator.generate(10, 0.1);
 //}
-
     static public void loadConfig(String filename, Network network, DemandMatrices matrices, boolean onlyGraph) throws Exception {
         FileReader fr = null;
         try {
@@ -176,7 +180,7 @@ public class Main {
                                 if (onlyGraph) {
                                     break;
                                 }
-                                
+
                                 if (!blockend) {
                                     lines += line + '\n';
                                 } else {
