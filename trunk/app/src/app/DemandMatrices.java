@@ -65,8 +65,8 @@ public class DemandMatrices {
         return dm;
     }
 
-    public Set<DemandMatrix> getRandMatrices(int count) {
-        HashSet<DemandMatrix> randomMatrices = new HashSet<DemandMatrix>();
+    public DemandMatrices getRandMatrices(int count) {
+        DemandMatrices dms = new DemandMatrices();
         Random gen = new Random();
         Set<Integer> nums = new HashSet<Integer>();
         Integer num;
@@ -78,10 +78,10 @@ public class DemandMatrices {
             }
             nums.add(num);
 
-            randomMatrices.add(matrices.get(num.intValue()));
+            dms.addDemandMatrix(matrices.get(num.intValue()));
         }
 
-        return randomMatrices;
+        return dms;
     }
 
     public int countMatrices() {
