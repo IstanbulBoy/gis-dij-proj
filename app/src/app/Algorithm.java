@@ -96,8 +96,10 @@ public class Algorithm {
     }
 
     public static RoutingPath[][] execute(Network net, DemandMatrices demandMatrices) throws Exception {
-        solvingTime = -1l;
-        long programStart = System.currentTimeMillis();
+    	solvingTime = -1l;
+        long programStart;
+        if(!noTime)
+        	programStart= System.currentTimeMillis();
         network = net;
         List<Node> nodes = new ArrayList<Node>();
         List<Node> nodesBackup = new ArrayList<Node>();
@@ -271,9 +273,11 @@ public class Algorithm {
             }
             new_path_counter_local = 0;
         }
-        long programEnd = System.currentTimeMillis();
-        solvingTime = programEnd - programStart;
-
+        long programEnd;
+        if(!noTime){
+        	programEnd = System.currentTimeMillis();
+            solvingTime = programEnd - programStart;
+        }
         System.out.println("nowe sciezki: " + new_path_counter_global + "\n przerwalem: " + break_counter + "\n dla ilosci macierzy: " + matrixCounter);
         return routesBackup;
     }
