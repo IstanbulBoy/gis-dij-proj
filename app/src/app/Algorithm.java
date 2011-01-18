@@ -95,7 +95,7 @@ public class Algorithm {
         }
     }
 
-    public static RoutingPath[][] execute(Network net, DemandMatrices demandMatrices) throws Exception {
+    public static RoutingPath[][] execute(Network net, DemandMatrices demandMatrices, boolean noTime) throws Exception {
     	solvingTime = -1l;
         long programStart;
         if(!noTime)
