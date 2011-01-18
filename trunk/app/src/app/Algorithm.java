@@ -647,7 +647,7 @@ public class Algorithm {
                         if (link.getPreCapacity() < demand) {
 //                            printGraph(net);
 
-                            System.out.println("pre: " + link.getPreCapacity() + " " + net.getLink(link.getId()).getPreCapacity() + " " + link.getId());
+//                            System.out.println("pre: " + link.getPreCapacity() + " " + net.getLink(link.getId()).getPreCapacity() + " " + link.getId());
                             if (!failLinks.contains(link)) {
                                 failLinks.add(link);
                                 found = true;
@@ -658,6 +658,7 @@ public class Algorithm {
                         againcounter++;
                         /* usuwamy przepelnione krawedzie */
 
+                        printGraph(net);
                         for (Link link : failLinks) {
                             net.getLink(link.getId()).setPreCapacity(0);
                         }
