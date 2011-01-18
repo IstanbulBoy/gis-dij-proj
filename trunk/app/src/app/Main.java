@@ -1,9 +1,11 @@
 package app;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sndlib.core.network.Link;
@@ -25,6 +27,17 @@ public class Main {
     };
 
     public static void main(String[] args) {
+    	File file = new File("statystyki.txt");
+    	PrintStream fileStream = new PrintStream(System.out);
+    	try {
+			file.createNewFile();
+			fileStream = new PrintStream(file);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	
         DemandMatrices dms = new DemandMatrices();
         DemandMatrices dmsWorking = new DemandMatrices();
         int i = 100;
@@ -35,35 +48,44 @@ public class Main {
         }
 
         try {
-            System.out.println("Szukam dobrych macierzy...");
+            //System.out.println("Szukam dobrych macierzy...");
             int nodes = 5;
-            while (nodes < 10) {
-                dmsWorking.clear();
-                dms.clear();
-                net = GraphGenerator.generate(nodes++, 0.3, 20, 30);
-                while (dmsWorking.countMatrices() < 300) {
-                    dmsWorking.clear();
-                    dms.clear();
-                    dms = ProblemGenerator.genDemandMatrices(net, 1000, 1.0, 10.0);
-                    DemandMatrices randDMs = dms.getRandMatrices(300);
-                    ProblemGenerator.genNetwork(net, randDMs);
-                    //usuwam macierze ktore posluzyly do tworzenia sieci
-                    for (DemandMatrix dm : randDMs.getMatrices()) {
-                        dms.removeDemandMatrix(dm);
-                    }
-                    //wyluskuje te ktore sa spelnialne dla sieci
-                    Algorithm.execute(net, dms, true, dmsWorking);
-                }
-
-                System.out.println("vvvvvvvvv");
-                if (Algorithm.execute(net, dmsWorking.getSubDemandMatrices(300), true) == null) {
-                    return;
-                }
-                System.out.println("^^^^^^^^^");
+            while (nodes < 50) {
+                for(int number=10;number>0;number--){
+	            	dmsWorking.clear();
+	                dms.clear();
+	                net = GraphGenerator.generate(nodes, 0.3, 20, 30);
+	                while (dmsWorking.countMatrices() < 300) {
+	                    dmsWorking.clear();
+	                    dms.clear();
+	                    dms = ProblemGenerator.genDemandMatrices(net, 1000, 1.0, 10.0);
+	                    DemandMatrices randDMs = dms.getRandMatrices(300);
+	                    ProblemGenerator.genNetwork(net, randDMs);
+	                    //usuwam macierze ktore posluzyly do tworzenia sieci
+	                    for (DemandMatrix dm : randDMs.getMatrices()) {
+	                        dms.removeDemandMatrix(dm);
+	                    }
+	                    //wyluskuje te ktore sa spelnialne dla sieci
+	                    Algorithm.execute(net, dms, true, dmsWorking, false);
+	                }
+	
+	                //System.out.println("vvvvvvvvv");
+	                if (Algorithm.execute(net, dmsWorking.getSubDemandMatrices(300), false) == null) {
+	                    return;
+	                }
+	                //System.out.println("^^^^^^^^^");
+	                Stat.addStatistics();
+            	}
+                nodes++;
+                Stat.generateStatistics(fileStream);
             }
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
+        //System.out.println("STAT:\n");
+        //Stat.generateStatistics();
+        
+        
 
     }
 
