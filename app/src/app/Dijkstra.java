@@ -10,10 +10,6 @@ import sndlib.core.problem.RoutingPath;
 import sndlib.core.problem.RoutingPath.Builder;
 import sndlib.core.util.NetworkUtils;
 
-/**
- *
- * @author hmsck
- */
 public class Dijkstra {
     static Network net;
     //LinkedHashMap<Node, Integer> distances = new LinkedHashMap<Node, Integer>();
@@ -21,7 +17,7 @@ public class Dijkstra {
     static HashMap<Node, Link> predecessorLink = new HashMap<Node, Link>();
     static HashMap<Node, Node> predecessorNode = new HashMap<Node, Node>();
     
-
+    /* Zmodyfikowany algorytm Dijkstra*/
     public static RoutingPath findRoute(Node first, Node last, Double maxDemand, Network networkArg) {
     	//System.out.println("--findroute: first="+first.getId()+" last="+last.getId()+" net="+networkArg+"\n");
         priorities.clear();
@@ -34,6 +30,7 @@ public class Dijkstra {
     	}
     	boolean success = false;
     	
+    	/* G³ówna pêtla algorytmu Dijkstry*/
     	AlgDij:
     	while(!priorities.isEmpty()){
     		//System.out.println("priorities:" + priorities);
@@ -77,18 +74,21 @@ public class Dijkstra {
         return path;
     }
     
+    /* Funkcja pomocnicza - sprawdza czy wêz³y po³¹czone krawêdzi¹ s¹ w kolejce*/
     static boolean areBothNodesInQueue(Link l){
     	if(isInPriorityQueue(l.getFirstNode()) && isInPriorityQueue(l.getSecondNode()))
     		return true;
     	else return false;
     }
-    
+    /* Funkcja pomocnicza - sprawdza czy wêze³ jest w kolejce*/
     static boolean isInPriorityQueue(Node n){
     	for(ExtendedNode s:priorities)
     		if(s.getNode() == n)
     			return true;
     	return false;
     }
+    
+    /* Funkcja pomocnicza - pobiera wartoœæ "odleg³oœci" dla danego wêz³a z kolejki*/
     static Double getDistFromQ(Node n){
     	for(ExtendedNode ex:priorities){
     		if(ex.getNode() == n)
@@ -96,7 +96,7 @@ public class Dijkstra {
     	}
     	return -Double.MAX_VALUE;
     }
-    
+    /* Funkcja pomocnicza - usawia wartoœæ "odleg³oœci" dla danego wêz³a w kolejce*/
     static void setDistInQ(Node n, Double distanceValue){
     	for(ExtendedNode ex:priorities){
     		if(ex.getNode() == n){
