@@ -658,6 +658,8 @@ public class Algorithm {
                         againcounter++;
                         /* usuwamy przepelnione krawedzie */
 
+                        System.out.println("v v v v v v v v v v v v v v v v v v v v v v v v ");
+                        System.out.println("aktualny graf: ");
                         printGraph(net);
                         for (Link link : failLinks) {
                             net.getLink(link.getId()).setPreCapacity(0);
@@ -670,12 +672,13 @@ public class Algorithm {
                         }
 
 //                        if (printComments) {
-                        System.out.print("[" + firstNode.getId() + "] -> [" + secondNode.getId() + "] ");
+                        System.out.print("current path [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] ");
                         printRoute(routes[i][j]);
-                        System.out.println(" (" + demand + ") ");
+                        System.out.println(" demand: (" + demand + ") ");
 
-                        System.out.print("new path for [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + demand + "] " + zc);
+                        System.out.println("new path for [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + demand + "] demand matrix: " + zc);
                         printGraph(net);
+
 //                        }
 
                         /* szukamy nowego polaczenia */
@@ -683,19 +686,18 @@ public class Algorithm {
                         route = Dijkstra.findRoute(firstNode, secondNode, demand, net);
 
                         if (route == null) {
-                            System.out.println("ic, jc, zc");
-                            System.out.println(ic);
-                            System.out.println(jc);
-                            System.out.println(zc);
-                            System.out.println(test);
+                             System.out.println("test " + test + " " + ic + " " + jc + " " + zc);
+
                             throw new Exception("Nie znalazlem sciezki");
 
                         }
                         routes[i][j] = routes[j][i] = route;
 
 //                        if (printComments) {
+                        System.out.println("nowa: ");
                         printRoute(route);
                         System.out.println();
+                        System.out.println("^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ");
 //                        }
 
                         new_path_counter_local++;
@@ -752,7 +754,7 @@ public class Algorithm {
 
         }
 
-        System.out.println("again:  " + againcounter);
-        return routesBackup;
+        System.out.println("znalezione sciezki alternatywne: " + againcounter);
+        return routes;
     }
 }
