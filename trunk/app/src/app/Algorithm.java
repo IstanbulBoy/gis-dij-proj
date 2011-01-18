@@ -620,7 +620,7 @@ public class Algorithm {
                 Node secondNode = n[jc];
                 int i = Integer.parseInt(firstNode.getId());
                 int j = Integer.parseInt(secondNode.getId());
-                boolean spr = false;
+                boolean spr = false, found = false;
 
                 for (zc = 0; zc < rdm.length; zc++) {
                     test++;
@@ -646,13 +646,15 @@ public class Algorithm {
 
                         if (link.getPreCapacity() < demand) {
 //                            printGraph(net);
+
                             System.out.println("pre: " + link.getPreCapacity() + " " + net.getLink(link.getId()).getPreCapacity() + " " + link.getId());
                             if (!failLinks.contains(link)) {
                                 failLinks.add(link);
+                                found = true;
                             }
                         }
                     }
-                    if (!failLinks.isEmpty()) {
+                    if (!failLinks.isEmpty() && found) {
                         againcounter++;
                         /* usuwamy przepelnione krawedzie */
 
@@ -670,7 +672,7 @@ public class Algorithm {
                         System.out.print("[" + firstNode.getId() + "] -> [" + secondNode.getId() + "] ");
                         printRoute(routes[i][j]);
                         System.out.println(" (" + demand + ") ");
-                        
+
                         System.out.print("new path for [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + demand + "] " + zc);
                         printGraph(net);
 //                        }
@@ -706,6 +708,7 @@ public class Algorithm {
                         if (zc != 0) {
                             spr = true;
                         }
+                        found = false;
                         break;
                     }
 
