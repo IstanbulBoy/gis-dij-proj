@@ -87,4 +87,31 @@ public class DemandMatrices {
     public int countMatrices() {
         return matrices.size();
     }
+
+    public void removeDemandMatrix(int i) {
+        matrices.remove(i);
+    }
+
+    public void removeDemandMatrix(DemandMatrix dm) {
+        matrices.remove(dm);
+    }
+
+    public void clear() {
+        matrices.clear();
+    }
+
+    public DemandMatrix get(int i) {
+        return matrices.get(i);
+    }
+
+    public DemandMatrices getSubDemandMatrices(int count) {
+        DemandMatrices dms = new DemandMatrices();
+        int i = 0;
+
+        while (i++ < count) {
+            dms.addDemandMatrix(matrices.get(i));
+        }
+
+        return dms;
+    }
 }

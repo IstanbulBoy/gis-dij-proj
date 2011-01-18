@@ -4,19 +4,14 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.apache.bcel.generic.NEW;
 
-import sndlib.core.network.*;
-import sndlib.core.problem.*;
 import sndlib.core.problem.RoutingPath.*;
-import sndlib.core.problem.RoutingPath;
-import sndlib.core.util.NetworkUtils;
 
 /* Klasa statystyczna */
 public class Stat {
 	static HashMap<Integer, Long> timeForNodes = new HashMap<Integer, Long>();
 	static HashMap<Integer, Integer> timeForNodesCount = new HashMap<Integer, Integer>();
-	/* Funkcja dodaj¹ca statytykê z danej sieci do danych*/
+	/* Funkcja dodajï¿½ca statytykï¿½ z danej sieci do danych*/
 	public static void addStatistics(){
 		Long sum;
 		int count;
@@ -30,7 +25,7 @@ public class Stat {
 			timeForNodesCount.put(Algorithm.network.nodeCount(), count);
 		}
 	}
-	/* Funkcja generuj¹ca i zapisuj¹ca statystyki z rozwi¹zanych do tej pory problemów*/
+	/* Funkcja generujï¿½ca i zapisujï¿½ca statystyki z rozwiï¿½zanych do tej pory problemï¿½w*/
 	public static void generateStatistics(PrintStream... printstream){
 		PrintStream ps = printstream.length == 0 ? System.out : printstream[0];
 		HashMap<Integer, Double> meanTimeForNodes = new HashMap<Integer, Double>();
