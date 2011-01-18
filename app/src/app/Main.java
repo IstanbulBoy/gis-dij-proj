@@ -24,91 +24,42 @@ public class Main {
         NONE, GRAPH, MATRIX
     };
 
-    /**
-     * @param args the command line arguments
-     */
-//    public static void main(String[] args) {
-//        System.out.println("Main");
-//        DemandMatrix dm = null;
-//        DemandMatrices dms = new DemandMatrices();
-//        Node n1 = net.newNode("0");
-//        Node n2 = net.newNode("1");
-//        Node n3 = net.newNode("2");
-//        Node n4 = net.newNode("3");
-//        Node n5 = net.newNode("4");
-//        net.newLink("a", n1, n2).setPreCapacity(50d);
-//        net.newLink("b", n1, n3).setPreCapacity(50d);
-//        net.newLink("c", n4, n2).setPreCapacity(50d);
-//        net.newLink("d", n4, n5).setPreCapacity(50d);
-//        net.newLink("e", n3, n5).setPreCapacity(50d);
-//
-//        dm = getdm(1d);
-//        for (Link link : net.links()) {
-//            link.setPreCost(dm.getDemand(link.getFirstNode(), link.getSecondNode()));
-//        }
-//
-//        dms.addDemandMatrix(getdm(5d));
-//        dms.addDemandMatrix(getdm(2d));
-//        dms.addDemandMatrix(getdm(3d));
-//        dms.addDemandMatrix(getdm(4d));
-//        dms.addDemandMatrix(getdm(5d));
-//
-//        try {
-//            RoutingPath[][] routes = Algorithm.execute(net, dms);
-//        } catch (Exception ex) {
-//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-//            Algorithm.printResult();
-//        }
-//    }
-    public static DemandMatrix getdm(double demand) {
-        DemandMatrix dm = new DemandMatrix();
-
-        dm.addDemand(demand++, net.getNode("0"), net.getNode("1"));
-        dm.addDemand(demand++, net.getNode("0"), net.getNode("2"));
-        dm.addDemand(demand++, net.getNode("0"), net.getNode("3"));
-        dm.addDemand(demand++, net.getNode("0"), net.getNode("4"));
-        dm.addDemand(demand++, net.getNode("1"), net.getNode("2"));
-        dm.addDemand(demand++, net.getNode("1"), net.getNode("3"));
-        dm.addDemand(demand++, net.getNode("1"), net.getNode("4"));
-        dm.addDemand(demand++, net.getNode("2"), net.getNode("3"));
-        dm.addDemand(demand++, net.getNode("2"), net.getNode("4"));
-        dm.addDemand(demand++, net.getNode("3"), net.getNode("4"));
-
-//        Node n1 = net.newNode("1");
-//        Node n2 = net.newNode("2");
-//        Node n3 = net.newNode("3");
-//        Node n4 = net.newNode("4");
-//        Node n5 = net.newNode("5");
-//        dm.addDemand(55d, n1, n2);
-//        dm.addDemand(55d, n1, n3);
-//        dm.addDemand(55d, n1, n4);
-//        dm.addDemand(55d, n1, n5);
-//        dm.addDemand(55d, n2, n3);
-//        dm.addDemand(55d, n2, n4);
-//        dm.addDemand(55d, n2, n5);
-//        dm.addDemand(55d, n3, n4);
-//        dm.addDemand(55d, n3, n5);
-//        dm.addDemand(55d, n4, n5);
-        return dm;
-    }
-
     public static void main(String[] args) {
         DemandMatrices dms = new DemandMatrices();
+        DemandMatrices dmsWorking = new DemandMatrices();
         int i = 100;
         try {
-            loadConfig("config.txt", net, dms, true);
+//            loadConfig("config.txt", net, dms, true);
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        dms = ProblemGenerator.genDemandMatrices(net, 100, 1.0, 10.0);
-        DemandMatrices dms1 = dms.getRandMatrices(50);
-        ProblemGenerator.genNetwork(net, dms1);
-
         try {
-            if (Algorithm.execute(net, dms) == null) {
-                System.out.println(i);
-                return;
+            System.out.println("Szukam dobrych macierzy...");
+            int nodes = 5;
+            while (nodes < 10) {
+                dmsWorking.clear();
+                dms.clear();
+                net = GraphGenerator.generate(nodes++, 0.3, 20, 30);
+                while (dmsWorking.countMatrices() < 300) {
+                    dmsWorking.clear();
+                    dms.clear();
+                    dms = ProblemGenerator.genDemandMatrices(net, 1000, 1.0, 10.0);
+                    DemandMatrices randDMs = dms.getRandMatrices(300);
+                    ProblemGenerator.genNetwork(net, randDMs);
+                    //usuwam macierze ktore posluzyly do tworzenia sieci
+                    for (DemandMatrix dm : randDMs.getMatrices()) {
+                        dms.removeDemandMatrix(dm);
+                    }
+                    //wyluskuje te ktore sa spelnialne dla sieci
+                    Algorithm.execute(net, dms, true, dmsWorking);
+                }
+
+                System.out.println("vvvvvvvvv");
+                if (Algorithm.execute(net, dmsWorking.getSubDemandMatrices(300), true) == null) {
+                    return;
+                }
+                System.out.println("^^^^^^^^^");
             }
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

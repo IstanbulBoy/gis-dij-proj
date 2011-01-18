@@ -41,7 +41,6 @@ public class ProblemGenerator {
             }
         }
 
-        Algorithm.printGraph(network);
         nodes.clear();
         for (Node n : network.nodes()) {
             nodes.add(n);
@@ -106,8 +105,6 @@ public class ProblemGenerator {
                 }
             }
         }
-
-        Algorithm.printGraph(network);
     }
 
     public static DemandMatrices genDemandMatrices(Network network, int matricesCount, double minValue, double maxValue) {
