@@ -105,10 +105,10 @@ public class Algorithm {
     }
 
     public static RoutingPath[][] execute(Network net, DemandMatrices demandMatrices, boolean noTime) throws Exception {
-        return execute(net, demandMatrices, noTime, null);
+        return execute(net, demandMatrices, noTime, null, false);
     }
 
-    public static RoutingPath[][] execute(Network net, DemandMatrices demandMatrices, boolean noTime, DemandMatrices dmsWorking) throws Exception {
+    public static RoutingPath[][] execute(Network net, DemandMatrices demandMatrices, boolean noTime, DemandMatrices dmsWorking, boolean printComments) throws Exception {
 
         solvingTime = -1l;
         long programStart = 0;
@@ -132,7 +132,7 @@ public class Algorithm {
 
         DemandMatrix maxDemMatrix = demandMatrices.getMaxDemandMatrix();
 
-        if (!noTime) {
+        if (printComments) {
             System.out.println("Szukam sciezki dla maksymalnych zapotrzebowan...");
             maxDemMatrix.print();
         }
@@ -140,7 +140,7 @@ public class Algorithm {
         /* sprawdzamy maksymalna macierz zapotrzebowan */
         for (Iterator<Node> iterFirst = nodes.iterator(); iterFirst.hasNext();) {
             Node firstNode = iterFirst.next();
-            if (!noTime) {
+            if (printComments) {
                 System.out.println("[" + firstNode.getId() + "]");
             }
             iterFirst.remove();
@@ -151,13 +151,13 @@ public class Algorithm {
                     if (firstNode == secondNode) {
                         continue;
                     }
-                    if (!noTime) {
+                    if (printComments) {
                         System.out.print("[" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + maxDemMatrix.getDemand(firstNode, secondNode) + "] ");
                     }
                     route = Dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode), network);
 
                     if (route == null) {
-                        if (!noTime) {
+                        if (printComments) {
                             printGraph(net);
                         }
                         throw new Exception("Nie znalazlem sciezki");
@@ -165,19 +165,19 @@ public class Algorithm {
                         int i = Integer.parseInt(firstNode.getId());
                         int j = Integer.parseInt(secondNode.getId());
                         routes[i][j] = routes[j][i] = route;
-                        if (!noTime) {
+                        if (printComments) {
                             printRoute(route);
                             System.out.println();
                         }
                     }
                 }
             }
-            if (!noTime) {
+            if (printComments) {
                 System.out.println("[/" + firstNode.getId() + "]");
             }
         }
 
-        if (!noTime) {
+        if (printComments) {
             System.out.println("Szukam sciezki dla reszty zapotrzebowan...");
         }
         RoutingPath routesBackup[][] = new RoutingPath[nodeCount][nodeCount];
@@ -202,7 +202,7 @@ public class Algorithm {
             for (Node n : net.nodes()) {
                 nodes.add(n);
             }
-            if (!noTime) {
+            if (printComments) {
                 demandMatrix.print();
             }
             for (Iterator<Node> iterFirst = nodes.iterator(); iterFirst.hasNext();) {
@@ -215,7 +215,7 @@ public class Algorithm {
                         int i = Integer.parseInt(firstNode.getId());
                         int j = Integer.parseInt(secondNode.getId());
 
-                        if (!noTime) {
+                        if (printComments) {
                             System.out.print("[" + firstNode.getId() + "] -> [" + secondNode.getId() + "] ");
                             printRoute(routes[i][j]);
                             System.out.println(" (" + demandMatrix.getDemand(firstNode, secondNode) + ") ");
@@ -244,7 +244,7 @@ public class Algorithm {
                             }
 
                             for (Link link : failLinks) {
-                                if (!noTime) {
+                                if (printComments) {
                                     System.out.println("Zeruje sciezke " + link.getId() + "[" + link.getFirstNode().getId() + "] -> [" + link.getSecondNode().getId() + "]");
                                 }
                                 if (capacityFailBackup.get(link.getId()) == network.getLink(link.getId()).getPreCapacity()) {
@@ -252,7 +252,7 @@ public class Algorithm {
                                 }
                             }
 
-                            if (!noTime) {
+                            if (printComments) {
                                 System.out.print("new path for [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + demandMatrix.getDemand(firstNode, secondNode) + "] ");
                                 printGraph(network);
                             }
@@ -260,7 +260,7 @@ public class Algorithm {
                             /* szukamy nowego polaczenia */
                             //System.out.println("F:"+firstNode+" S:"+secondNode+"\nnet:"+network);
                             route = Dijkstra.findRoute(firstNode, secondNode, demandMatrix.getDemand(firstNode, secondNode), network);
-                            if (!noTime) {
+                            if (printComments) {
                                 printRoute(route);
                                 System.out.println();
                             }
@@ -294,7 +294,7 @@ public class Algorithm {
                             bd = bd.setScale(2, BigDecimal.ROUND_UP);
                             link.setPreCapacity(bd.doubleValue());
                         }
-                        if (!noTime) {
+                        if (printComments) {
                             printGraph(network);
                         }
                     }
@@ -323,8 +323,8 @@ public class Algorithm {
             programEnd = System.currentTimeMillis();
             solvingTime = programEnd - programStart;
         }
-//        if (!noTime)
-        System.out.println("nowe sciezki: " + new_path_counter_global + "\n przerwalem: " + break_counter + "\n dla ilosci macierzy: " + matrixCounter);
+      if (printComments)
+        	System.out.println("nowe sciezki: " + new_path_counter_global + "\n przerwalem: " + break_counter + "\n dla ilosci macierzy: " + matrixCounter);
 
         return routesBackup;
     }
