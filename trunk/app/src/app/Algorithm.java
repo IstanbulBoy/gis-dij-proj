@@ -104,6 +104,12 @@ public class Algorithm {
         }
     }
 
+    /**
+     * Wyłuskuje macierze ktore sa rozwiazywalne na wejsciowym grafie i zwraca w dmsWorking
+     * na podstawie których bedzie pozniej dostosowywana siec pod wzgledem przepustowosci.
+     * Metoda szuka routingu dla kazdej macierzy z osobna, tzn odwracajac kolejnosc sprawdzania macierzy zapotrzebowan
+     * routingi zostana wyznaczone inaczej, dzieki temu przepustowosci na grafie beda mialy racjonalne wartosci
+     */
     public static RoutingPath[][] extractWorkingMatrices(Network net, DemandMatrices demandMatrices, DemandMatrices dmsWorking, boolean noTime, boolean printComments) throws Exception {
 
         solvingTime = -1l;
@@ -329,10 +335,10 @@ public class Algorithm {
         return routesBackup;
     }
 
-    public static RoutingPath[][] execute(Network net, DemandMatrices demandMatrices, boolean noTime) throws Exception {
-        return extractWorkingMatrices(net, demandMatrices, null, noTime, false);
-    }
-
+    /*
+     * Sprawdza czy wyszukane routingi spełniają macierze zapotrzebowań dla danej sieci - "uruchamiamy" kazda macierz zapotrzebowan
+     * i sprawdzamy czy nei ma przepelnionych krawedzi
+     */
     public static boolean checkRouting(Network network, DemandMatrices demandMatrices, boolean noTime, DemandMatrices dmsWorking, boolean printComments, RoutingPath[][] routesBackup) throws Exception {
         solvingTime = -1l;
         long programStart = 0;
@@ -450,6 +456,7 @@ public class Algorithm {
                             }
 
                             if (link.getPreCapacity() < demand) {
+                                //znaleziono przepelnione krawedzie - algorytm wyszukal niepoprawne routingi
                                 printGraph(network);
 
                                 //przywracamy stara siec przed wyjsciem
@@ -525,6 +532,9 @@ public class Algorithm {
         }
     }
 
+    /*
+     * Szuka sciezek dla okreslonych macierzy zapotrzebowan. Glowna metoda algorytmu.
+     */
     public static RoutingPath[][] findRouting(Network net, DemandMatrices demandMatrices, boolean noTime, DemandMatrices dmsWorking, boolean printComments) throws Exception {
         againCounter = 0;
         solvingTime = -1l;
@@ -590,6 +600,7 @@ public class Algorithm {
                         }
                         throw new Exception("Nie znalazlem sciezki");
                     } else {
+                        /* jesli sciezka istnieje to bedzie sluzyla do sprawdzania wszystkich kolejnych matcierzy zap. */
                         int i = Integer.parseInt(firstNode.getId());
                         int j = Integer.parseInt(secondNode.getId());
                         routes[i][j] = routes[j][i] = route;
@@ -606,13 +617,13 @@ public class Algorithm {
         }
 
         /* sprawdzamy wszystkie macierze zapotrzebowan */
+        
         if (printComments) {
             System.out.println("Szukam sciezki dla reszty zapotrzebowan...");
         }
         RoutingPath routesBackup[][] = new RoutingPath[nodeCount][nodeCount];
         cloneRoutingTable(routes, routesBackup);
         Set<Link> failLinks = new HashSet<Link>();
-
 
         int new_path_counter_local = 0;
         int break_counter = 0;
@@ -646,7 +657,11 @@ public class Algorithm {
                 Node secondNode = n[jc];
                 int i = Integer.parseInt(firstNode.getId());
                 int j = Integer.parseInt(secondNode.getId());
-                boolean spr = false, found = false;
+                //jesli dla danej macierzy trzeba szukac sciezki alternatywnej
+                //to po znalezeniu nalezy sprawdzic wszystkie pozostale
+                boolean search_again_new_paths = false;
+                //sa krawedzie ktore nalezy omijac (przepelnione)
+                boolean need_new_path_now = false;
 
                 for (zc = 0; zc < matrices.length; zc++) {
                     int demand = matrices[zc].getDemand(firstNode, secondNode);
@@ -669,11 +684,11 @@ public class Algorithm {
                         if (net.getLink(link.getId()).getPreCapacity() < demand) {
                             if (!failLinks.contains(link)) {
                                 failLinks.add(link);
-                                found = true;
+                                need_new_path_now = true;
                             }
                         }
                     }
-                    if (!failLinks.isEmpty() && found) {
+                    if (!failLinks.isEmpty() && need_new_path_now) {
                         againcounter++;
                         /* usuwamy przepelnione krawedzie */
 
@@ -694,7 +709,8 @@ public class Algorithm {
                         route = Dijkstra.findRoute(firstNode, secondNode, demand, net);
 
                         if (route == null) {
-
+                            //nic sie nie da zrobic, macierz nie ma dobrej sciezki
+                            //wszystkie krawedzie sa przepelnione
                             for (Link l : net.links()) {
                                 net.getLink(l.getId()).setPreCapacity(capacityBackup.get(l.getId()));
                             }
@@ -713,9 +729,9 @@ public class Algorithm {
                             }
                         }
 
-                        found = false;
+                        need_new_path_now = false;
                         if (zc != 0) {
-                            spr = true;
+                            search_again_new_paths = true;
                             break;
                         }
                     }
@@ -732,7 +748,9 @@ public class Algorithm {
                     }
                 }
 
-                if (!spr) {
+                //jesli szukamy znowu nowych sciezek, to przywracamy przepustowosci
+                //dla macierzy z poprzedniego kroku
+                if (!search_again_new_paths) {
                     for (matrixCounter = 0; matrixCounter < matrices.length; matrixCounter++) {
                         for (String id : capacities[matrixCounter].keySet()) {
                             capacityFailBackup[matrixCounter].put(id, capacities[matrixCounter].get(id));
