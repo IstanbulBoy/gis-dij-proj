@@ -49,6 +49,7 @@ public class Main {
         }
         int nullCount = 0, allCount = 0, notNullCount = 0;
         int ic, jc;
+        int suckes = 0;
         try {
             //System.out.println("Szukam dobrych macierzy...");
             int nodes = 5;
@@ -90,13 +91,12 @@ public class Main {
 
 //                System.out.println("vvvvvvvvv");
                 ProblemGenerator.genNetwork(net, randDMs);
-                int again = 0;
+
                 try {
                     routing = Algorithm.properExecute(net, dmsWorking, false, null, false);
                     if (routing == null) {
                         nullCount++;
                         System.out.println("; zlych: " + Algorithm.againCounter);
-                        again = 0;
                         //System.out.println("nie rozwiazywalnych grafow: " + nullCount);
                         continue;
                     } else {
@@ -136,6 +136,7 @@ public class Main {
                 } else {
                     //System.out.println("; dobrych: " + allCount);
                     if (zludny_sukces) {
+                        System.out.println("nie oszukuje!!");
                         Algorithm.checkExecute(net, dmsWorking, false, null, true, routing);
                     }
                     allCount++;
@@ -148,6 +149,7 @@ public class Main {
 //                Stat.generateStatistics(fileStream);
 //                }
                 if (zludny_sukces) {
+                    sukces++;
                     throw new Exception("SUKCES NIE ZLUDNY!!");
                 }
             }
