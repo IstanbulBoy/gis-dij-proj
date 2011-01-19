@@ -329,23 +329,22 @@ public class Algorithm {
         return execute(net, demandMatrices, noTime, null, false);
     }
 
-    public static boolean checkExecute(Network net, DemandMatrices demandMatrices, boolean noTime, DemandMatrices dmsWorking, boolean printComments, RoutingPath[][] routesBackup) throws Exception {
+    public static boolean checkExecute(Network network, DemandMatrices demandMatrices, boolean noTime, DemandMatrices dmsWorking, boolean printComments, RoutingPath[][] routesBackup) throws Exception {
 
         solvingTime = -1l;
         long programStart = 0;
         if (!noTime) {
             programStart = System.currentTimeMillis();
         }
-        network = net;
         List<Node> nodes = new ArrayList<Node>();
         Map<String, Double> capacityBackup = new HashMap<String, Double>();
         int matrixCounter = 0;
 
-        for (Node n : net.nodes()) {
+        for (Node n : network.nodes()) {
             nodes.add(n);
         }
 
-        int nodeCount = net.nodeCount();
+        int nodeCount = network.nodeCount();
 
         RoutingPath route = null;
 
@@ -378,7 +377,7 @@ public class Algorithm {
 
                     if (route == null) {
                         if (printComments) {
-                            printGraph(net);
+                            printGraph(network);
                         }
                         throw new Exception("Nie znalazlem sciezki");
                     } else {
@@ -409,7 +408,7 @@ public class Algorithm {
 
 
         /* kopia sieci */
-        for (Link link : net.links()) {
+        for (Link link : network.links()) {
             capacityBackup.put(link.getId(), link.getPreCapacity());
         }
         matrixCounter = 0;
@@ -423,7 +422,7 @@ public class Algorithm {
             break_matrix = false;
             matrixCounter++;
             nodes.clear();
-            for (Node n : net.nodes()) {
+            for (Node n : network.nodes()) {
                 nodes.add(n);
             }
             if (printComments) {
@@ -448,22 +447,26 @@ public class Algorithm {
                         double demand = demandMatrix.getDemand(firstNode, secondNode);
 
                         for (RoutingLink routingLink : routes[i][j].routingLinks()) {
-                            Link link = net.getLink(routingLink.getLink().getId());
+                            Link link = network.getLink(routingLink.getLink().getId());
 
                             /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
-                            if (net.getLink(link.getId()).getPreCapacity() < demand) {
-                                System.out.println("zludny sukces: " + link.getPreCapacity() + " " + net.getLink(link.getId()).getPreCapacity() + " " + link.getId());
+                            if (network == null || link == null) {
+                                printGraph(network);
+                            }
+
+                            if (link.getPreCapacity() < demand) {
+                                System.out.println("zludny sukces: " + link.getPreCapacity() + " " + network.getLink(link.getId()).getPreCapacity() + " " + link.getId());
 //                                throw new Exception("OSZUKUJE!");
-                                printGraph(net);
+                                printGraph(network);
                                 return false;
                             }
                         }
                         /* wszystkie krawedzie spelniaja zapotrzebowanie, wiec odejmujemy zapotrzebowania od nich */
                         for (RoutingLink routingLink : routes[i][j].routingLinks()) {
-                            Link link = net.getLink(routingLink.getLink().getId());
+                            Link link = network.getLink(routingLink.getLink().getId());
 
                             /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
-                            link.setPreCapacity(net.getLink(link.getId()).getPreCapacity() - demand);
+                            link.setPreCapacity(network.getLink(link.getId()).getPreCapacity() - demand);
                         }
                         if (printComments) {
                             printGraph(network);
@@ -474,8 +477,8 @@ public class Algorithm {
                     break;
                 }
             }
-            for (Link l : net.links()) {
-                net.getLink(l.getId()).setPreCapacity(capacityBackup.get(l.getId()));
+            for (Link l : network.links()) {
+                network.getLink(l.getId()).setPreCapacity(capacityBackup.get(l.getId()));
             }
             new_path_counter_local = 0;
         }
