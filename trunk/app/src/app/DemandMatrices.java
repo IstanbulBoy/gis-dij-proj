@@ -34,8 +34,8 @@ public class DemandMatrices {
         return demand;
     }
 
-    public double getMaxDemand(String first, String last) {
-        double demand = -1d;
+    public int getMaxDemand(String first, String last) {
+        int demand = -1;
 
         for (DemandMatrix matrix : matrices) {
             if (matrix.getDemand(first, last) > demand) {
@@ -108,8 +108,9 @@ public class DemandMatrices {
         DemandMatrices dms = new DemandMatrices();
         int i = 0;
 
-        while (i++ < count) {
+        while (i < count) {
             dms.addDemandMatrix(matrices.get(i));
+            i++;
         }
 
         return dms;

@@ -156,7 +156,8 @@ public class Algorithm {
                         if (printComments) {
                             printGraph(net);
                         }
-                        throw new Exception("Nie znalazlem sciezki");
+//                        throw new Exception("Nie znalazlem sciezki");
+                        return null;
                     } else {
                         int i = Integer.parseInt(firstNode.getId());
                         int j = Integer.parseInt(secondNode.getId());
@@ -331,7 +332,7 @@ public class Algorithm {
         return execute(net, demandMatrices, noTime, null, false);
     }
 
-    public static boolean checkExecute(Network net, DemandMatrices demandMatrices, boolean noTime, DemandMatrices dmsWorking, boolean printComments, RoutingPath[][] routes) throws Exception {
+    public static boolean checkExecute(Network net, DemandMatrices demandMatrices, boolean noTime, DemandMatrices dmsWorking, boolean printComments, RoutingPath[][] routesBackup) throws Exception {
 
         solvingTime = -1l;
         long programStart = 0;
@@ -356,6 +357,7 @@ public class Algorithm {
         if (printComments) {
             System.out.println("Szukam sciezki dla maksymalnych zapotrzebowan...");
             maxDemMatrix.print();
+            printGraph(network);
         }
 
         /* sprawdzamy maksymalna macierz zapotrzebowan */
@@ -385,7 +387,6 @@ public class Algorithm {
                     } else {
                         int i = Integer.parseInt(firstNode.getId());
                         int j = Integer.parseInt(secondNode.getId());
-                        routes[i][j] = routes[j][i] = route;
                         if (printComments) {
                             printRoute(route);
                             System.out.println();
@@ -398,11 +399,15 @@ public class Algorithm {
             }
         }
 
+        if (routes == null) {
+            return true;
+        }
+
         if (printComments) {
             System.out.println("Szukam sciezki dla reszty zapotrzebowan...");
         }
-        RoutingPath routesBackup[][] = new RoutingPath[nodeCount][nodeCount];
-        cloneRoutingTable(routes, routesBackup);
+        RoutingPath routes[][] = new RoutingPath[nodeCount][nodeCount];
+        cloneRoutingTable(routesBackup, routes);
         Set<Link> failLinks = new HashSet<Link>();
 
 
@@ -450,7 +455,8 @@ public class Algorithm {
 
                             /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
                             if (link.getPreCapacity() < demand) {
-                                throw new Exception("OSZUKUJE!");
+//                                throw new Exception("OSZUKUJE!");
+                                return false;
                             }
                         }
                         /* wszystkie krawedzie spelniaja zapotrzebowanie, wiec odejmujemy zapotrzebowania od nich */
@@ -473,15 +479,6 @@ public class Algorithm {
             }
             for (Link l : net.links()) {
                 l.setPreCapacity(capacityBackup.get(l.getId()));
-            }
-            if (break_matrix) {
-                cloneRoutingTable(routesBackup, routes);
-            } else {
-                new_path_counter_global += new_path_counter_local;
-                cloneRoutingTable(routes, routesBackup);
-                if (dmsWorking != null) {
-                    dmsWorking.addDemandMatrix(demandMatrix);
-                }
             }
             new_path_counter_local = 0;
         }
@@ -627,7 +624,7 @@ public class Algorithm {
 //                    System.out.println(ic + " " + jc + " " + zc);
 //                    printGraph(net);
                     DemandMatrix demandMatrix = rdm[zc];
-                    double demand = demandMatrix.getDemand(firstNode, secondNode);
+                    int demand = demandMatrix.getDemand(firstNode, secondNode);
 
                     if (printComments) {
                         System.out.print("[" + firstNode.getId() + "] -> [" + secondNode.getId() + "] ");
@@ -686,9 +683,10 @@ public class Algorithm {
                         route = Dijkstra.findRoute(firstNode, secondNode, demand, net);
 
                         if (route == null) {
-                             System.out.println("test " + test + " " + ic + " " + jc + " " + zc);
+                            System.out.println("test " + test + " " + ic + " " + jc + " " + zc);
 
-                            throw new Exception("Nie znalazlem sciezki");
+//                            throw new Exception("Nie znalazlem sciezki");
+                            return null;
 
                         }
                         routes[i][j] = routes[j][i] = route;
@@ -708,11 +706,12 @@ public class Algorithm {
                                 capacities[matrixCounter].put(link.getId(), capacityFailBackup[matrixCounter].get(link.getId()));
                             }
                         }
+
+                        found = false;
                         if (zc != 0) {
                             spr = true;
+                            break;
                         }
-                        found = false;
-                        break;
                     }
 
                     /* wszystkie krawedzie spelniaja zapotrzebowanie, wiec odejmujemy zapotrzebowania od nich */
@@ -755,6 +754,9 @@ public class Algorithm {
         }
 
         System.out.println("znalezione sciezki alternatywne: " + againcounter);
+        if (againcounter > 0) {
+            throw new Exception("SUKCES!!");
+        }
         return routes;
     }
 }

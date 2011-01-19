@@ -18,7 +18,7 @@ public class Dijkstra {
     static HashMap<Node, Node> predecessorNode = new HashMap<Node, Node>();
     
     /* Zmodyfikowany algorytm Dijkstra*/
-    public static RoutingPath findRoute(Node first, Node last, Double maxDemand, Network networkArg) {
+    public static RoutingPath findRoute(Node first, Node last, Integer maxDemand, Network networkArg) {
     	//System.out.println("--findroute: first="+first.getId()+" last="+last.getId()+" net="+networkArg+"\n");
         priorities.clear();
         predecessorLink.clear();
@@ -30,14 +30,14 @@ public class Dijkstra {
     	}
     	boolean success = false;
     	
-    	/* G³ówna pêtla algorytmu Dijkstry*/
+    	/* Gï¿½ï¿½wna pï¿½tla algorytmu Dijkstry*/
     	AlgDij:
     	while(!priorities.isEmpty()){
     		//System.out.println("priorities:" + priorities);
     		Double currentDist = priorities.peek().getDistance();
     		Node start = priorities.peek().getNode();
     		ExtendedNode exN = priorities.peek();
-    		//System.out.println("WYBÓR: node " + start.getId() + "["+currentDist+"]");
+    		//System.out.println("WYBï¿½R: node " + start.getId() + "["+currentDist+"]");
     		for(Link l: NetworkUtils.getIncidentLinks(start, net)){
     			if(areBothNodesInQueue(l) && l.getPreCapacity()>=maxDemand){
     				Node secondNode = l.getFirstNode() == start ? l.getSecondNode() : l.getFirstNode();
@@ -74,13 +74,13 @@ public class Dijkstra {
         return path;
     }
     
-    /* Funkcja pomocnicza - sprawdza czy wêz³y po³¹czone krawêdzi¹ s¹ w kolejce*/
+    /* Funkcja pomocnicza - sprawdza czy wï¿½zï¿½y poï¿½ï¿½czone krawï¿½dziï¿½ sï¿½ w kolejce*/
     static boolean areBothNodesInQueue(Link l){
     	if(isInPriorityQueue(l.getFirstNode()) && isInPriorityQueue(l.getSecondNode()))
     		return true;
     	else return false;
     }
-    /* Funkcja pomocnicza - sprawdza czy wêze³ jest w kolejce*/
+    /* Funkcja pomocnicza - sprawdza czy wï¿½zeï¿½ jest w kolejce*/
     static boolean isInPriorityQueue(Node n){
     	for(ExtendedNode s:priorities)
     		if(s.getNode() == n)
@@ -88,7 +88,7 @@ public class Dijkstra {
     	return false;
     }
     
-    /* Funkcja pomocnicza - pobiera wartoœæ "odleg³oœci" dla danego wêz³a z kolejki*/
+    /* Funkcja pomocnicza - pobiera wartoï¿½ï¿½ "odlegï¿½oï¿½ci" dla danego wï¿½zï¿½a z kolejki*/
     static Double getDistFromQ(Node n){
     	for(ExtendedNode ex:priorities){
     		if(ex.getNode() == n)
@@ -96,7 +96,7 @@ public class Dijkstra {
     	}
     	return -Double.MAX_VALUE;
     }
-    /* Funkcja pomocnicza - usawia wartoœæ "odleg³oœci" dla danego wêz³a w kolejce*/
+    /* Funkcja pomocnicza - usawia wartoï¿½ï¿½ "odlegï¿½oï¿½ci" dla danego wï¿½zï¿½a w kolejce*/
     static void setDistInQ(Node n, Double distanceValue){
     	for(ExtendedNode ex:priorities){
     		if(ex.getNode() == n){
