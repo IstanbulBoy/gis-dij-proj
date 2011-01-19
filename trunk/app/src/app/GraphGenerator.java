@@ -4,7 +4,7 @@ import sndlib.core.network.*;
 import sndlib.core.problem.RoutingPath.*;
 
 public class GraphGenerator {
-
+	
     static public Network generate(int nodes, double percent, double costMin, double costMax) {
         Network net = new Network();
         Integer numberOfNodes = nodes;
