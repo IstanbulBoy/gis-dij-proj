@@ -4,7 +4,6 @@
  */
 package app;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,7 +26,7 @@ public class ProblemGenerator {
         List<Node> nodes = new ArrayList<Node>();
         RoutingPath routes[][] = new RoutingPath[network.nodeCount()][network.nodeCount()];
         DemandMatrix dmtmp = demandMatrices.getMatrices().get(0);
-        Map<String, Double> capacityBackup[] = new HashMap[demandMatrices.countMatrices()];
+        Map<String, Integer> capacityBackup[] = new HashMap[demandMatrices.countMatrices()];
         int matrixCounter = 0;
 
         /* ustawiamy przepustowosc poszczegolnych link-ow na maksymalna,
@@ -36,9 +35,9 @@ public class ProblemGenerator {
             link.setPreCapacity(Double.MAX_VALUE);
         }
         for (matrixCounter = 0; matrixCounter < demandMatrices.countMatrices(); matrixCounter++) {
-            capacityBackup[matrixCounter] = new HashMap<String, Double>();
+            capacityBackup[matrixCounter] = new HashMap<String, Integer>();
             for (Link link : network.links()) {
-                capacityBackup[matrixCounter].put(link.getId(), 0.0);
+                capacityBackup[matrixCounter].put(link.getId(), 0);
             }
         }
 
@@ -81,13 +80,11 @@ public class ProblemGenerator {
                         int i = Integer.parseInt(firstNode.getId());
                         int j = Integer.parseInt(secondNode.getId());
 
-                        double demand = demandMatrix.getDemand(firstNode, secondNode);
+                        int demand = demandMatrix.getDemand(firstNode, secondNode);
 
                         for (RoutingLink routingLink : routes[i][j].routingLinks()) {
                             Link link = routingLink.getLink();
-                            BigDecimal bd = new BigDecimal(capacityBackup[matrixCounter].get(link.getId()) + demand);
-                            bd = bd.setScale(2, BigDecimal.ROUND_UP);
-                            capacityBackup[matrixCounter].put(link.getId(), bd.doubleValue());
+                            capacityBackup[matrixCounter].put(link.getId(), capacityBackup[matrixCounter].get(link.getId()) + demand);
                         }
                     }
                 }
@@ -111,13 +108,13 @@ public class ProblemGenerator {
     public static DemandMatrices genDemandMatrices(Network network, int matricesCount, int minValue, int maxValue) {
         DemandMatrices dms = new DemandMatrices();
         int val = maxValue - minValue;
-           Random gen = new Random();
+        Random gen = new Random();
 
         while (matricesCount-- > 0) {
             DemandMatrix m = new DemandMatrix();
             for (Node n1 : network.nodes()) {
                 for (Node n2 : network.nodes()) {
-                    m.addDemand(gen.nextInt(val)+minValue, n1, n2);
+                    m.addDemand(gen.nextInt(val) + minValue, n1, n2);
                 }
             }
             dms.addDemandMatrix(m);

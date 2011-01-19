@@ -1,7 +1,6 @@
 package app;
 
 import java.io.PrintStream;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -288,9 +287,7 @@ public class Algorithm {
                             Link link = routingLink.getLink();
 
                             /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
-                            BigDecimal bd = new BigDecimal(link.getPreCapacity() - demand);
-                            bd = bd.setScale(2, BigDecimal.ROUND_UP);
-                            link.setPreCapacity(bd.doubleValue());
+                            link.setPreCapacity(link.getPreCapacity() - demand);
                         }
                         if (printComments) {
                             printGraph(network);
@@ -464,9 +461,7 @@ public class Algorithm {
                             Link link = routingLink.getLink();
 
                             /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
-                            BigDecimal bd = new BigDecimal(link.getPreCapacity() - demand);
-                            bd = bd.setScale(2, BigDecimal.ROUND_UP);
-                            link.setPreCapacity(bd.doubleValue());
+                            link.setPreCapacity(link.getPreCapacity() - demand);
                         }
                         if (printComments) {
                             printGraph(network);
@@ -719,9 +714,7 @@ public class Algorithm {
                         Link link = routingLink.getLink();
 
                         /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
-                        BigDecimal bd = new BigDecimal(link.getPreCapacity() - demand);
-                        bd = bd.setScale(2, BigDecimal.ROUND_UP);
-                        capacities[zc].put(link.getId(), bd.doubleValue());
+                        capacities[zc].put(link.getId(), link.getPreCapacity() - demand);
                     }
                     if (printComments) {
                         printGraph(net);
