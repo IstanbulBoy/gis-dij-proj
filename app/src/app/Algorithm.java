@@ -1,6 +1,6 @@
 package app;
 
-import com.sun.xml.internal.ws.util.StringUtils;
+//import com.sun.xml.internal.ws.util.StringUtils;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -112,11 +112,6 @@ public class Algorithm {
      */
     public static RoutingPath[][] extractWorkingMatrices(Network net, DemandMatrices demandMatrices, DemandMatrices dmsWorking, boolean noTime, boolean printComments) throws Exception {
 
-        solvingTime = -1l;
-        long programStart = 0;
-        if (!noTime) {
-            programStart = System.currentTimeMillis();
-        }
         List<Node> nodes = new ArrayList<Node>();
         Map<String, Double> capacityBackup = new HashMap<String, Double>();
         int matrixCounter = 0;
@@ -323,11 +318,7 @@ public class Algorithm {
             net.getLink(l.getId()).setPreCapacity(capacityBackup.get(l.getId()));
         }
 
-        long programEnd;
-        if (!noTime) {
-            programEnd = System.currentTimeMillis();
-            solvingTime = programEnd - programStart;
-        }
+        
         if (printComments) {
             System.out.println("nowe sciezki: " + new_path_counter_global + "\n przerwalem: " + break_counter + "\n dla ilosci macierzy: " + matrixCounter);
         }
@@ -340,11 +331,8 @@ public class Algorithm {
      * i sprawdzamy czy nei ma przepelnionych krawedzi
      */
     public static boolean checkRouting(Network network, DemandMatrices demandMatrices, boolean noTime, DemandMatrices dmsWorking, boolean printComments, RoutingPath[][] routesBackup) throws Exception {
-        solvingTime = -1l;
-        long programStart = 0;
-        if (!noTime) {
-            programStart = System.currentTimeMillis();
-        }
+        
+        
         List<Node> nodes = new ArrayList<Node>();
         Map<String, Double> capacityBackup = new HashMap<String, Double>();
         int matrixCounter = 0;
@@ -485,11 +473,7 @@ public class Algorithm {
             }
         }
 
-        long programEnd;
-        if (!noTime) {
-            programEnd = System.currentTimeMillis();
-            solvingTime = programEnd - programStart;
-        }
+        
         if (printComments) {
             System.out.println("nowe sciezki: " + new_path_counter_global + "\n przerwalem: " + break_counter + "\n dla ilosci macierzy: " + matrixCounter);
         }
