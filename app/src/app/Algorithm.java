@@ -452,6 +452,7 @@ public class Algorithm {
 
                             /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
                             if (link.getPreCapacity() < demand) {
+                                System.out.println("zludny sukces: " + link.getPreCapacity() + " " + net.getLink(link.getId()).getPreCapacity() + " " + link.getId());
 //                                throw new Exception("OSZUKUJE!");
                                 return false;
                             }
