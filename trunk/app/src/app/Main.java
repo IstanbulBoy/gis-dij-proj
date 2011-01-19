@@ -142,7 +142,7 @@ public class Main {
                     allCount++;
                 }
                 //System.out.println("^^^^^^^^^");
-//                Stat.addStatistics();
+               Stat.addStatistics(net);
 //                }
 
 //                    nodes++;
@@ -162,8 +162,8 @@ public class Main {
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //System.out.println("STAT:\n");
-        //Stat.generateStatistics();
+        System.out.println("STAT:\n");
+        Stat.generateStatistics();
 
 
 

@@ -3,6 +3,7 @@ package app;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import sndlib.core.network.Network;
 
 
 import sndlib.core.problem.RoutingPath.*;
@@ -12,23 +13,23 @@ public class Stat {
 	static HashMap<Integer, Long> timeForNodes = new HashMap<Integer, Long>();
 	static HashMap<Integer, Integer> timeForNodesCount = new HashMap<Integer, Integer>();
 	/* Funkcja dodaj�ca statytyk� z danej sieci do danych*/
-	public static void addStatistics(){
+	public static void addStatistics(Network network){
 		Long sum;
 		int count;
-//		if(timeForNodes.containsKey(Algorithm.network.nodeCount())){
-//			sum=timeForNodes.remove(Algorithm.network.nodeCount());
-//			sum+=Algorithm.solvingTime;
-//			timeForNodes.put(Algorithm.network.nodeCount(), sum);
-//
-//			count = timeForNodesCount.remove(Algorithm.network.nodeCount());
-//			count++;
-//			timeForNodesCount.put(Algorithm.network.nodeCount(), count);
-//		}
-//		else {
-//			timeForNodes.put(Algorithm.network.nodeCount(), Algorithm.solvingTime);
-//			timeForNodesCount.put(Algorithm.network.nodeCount(), 1);
-//
-//		}
+		if(timeForNodes.containsKey(network.nodeCount())){
+			sum=timeForNodes.remove(network.nodeCount());
+			sum+=Algorithm.solvingTime;
+			timeForNodes.put(network.nodeCount(), sum);
+
+			count = timeForNodesCount.remove(network.nodeCount());
+			count++;
+			timeForNodesCount.put(network.nodeCount(), count);
+		}
+		else {
+			timeForNodes.put(network.nodeCount(), Algorithm.solvingTime);
+			timeForNodesCount.put(network.nodeCount(), 1);
+
+		}
 	}
 	/* Funkcja generuj�ca i zapisuj�ca statystyki z rozwi�zanych do tej pory problem�w*/
 	public static void generateStatistics(PrintStream... printstream){
