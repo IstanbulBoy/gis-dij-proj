@@ -12,7 +12,8 @@ import sndlib.core.util.NetworkUtils;
 
 public class Dijkstra {
     static Network net;
-    //LinkedHashMap<Node, Integer> distances = new LinkedHashMap<Node, Integer>();
+    
+    /*Kolejka priorytetowa odleglosci od wezla startowego*/
     static PriorityQueue<ExtendedNode> priorities = new PriorityQueue<ExtendedNode>();
     static HashMap<Node, Link> predecessorLink = new HashMap<Node, Link>();
     static HashMap<Node, Node> predecessorNode = new HashMap<Node, Node>();
@@ -30,22 +31,24 @@ public class Dijkstra {
     	}
     	boolean success = false;
     	
-    	/* G��wna p�tla algorytmu Dijkstry*/
+    	/* Glowna petla algorytmu Dijkstry*/
     	AlgDij:
     	while(!priorities.isEmpty()){
-    		//System.out.println("priorities:" + priorities);
     		Double currentDist = priorities.peek().getDistance();
     		Node start = priorities.peek().getNode();
     		ExtendedNode exN = priorities.peek();
-    		//System.out.println("WYB�R: node " + start.getId() + "["+currentDist+"]");
+    		/*Petla wykonywana dla wszystkich wezlow polaczonych z aktualnym*/
     		for(Link l: NetworkUtils.getIncidentLinks(start, net)){
+    			/*rozpatrywane sa tylko te wezly, ktore sa w kolejce*/
     			if(areBothNodesInQueue(l) && l.getPreCapacity()>=maxDemand){
     				Node secondNode = l.getFirstNode() == start ? l.getSecondNode() : l.getFirstNode();
     				Double secondDist = getDistFromQ(secondNode);
+    				/*sprawdzenie warunku poprawy aktualnej odleglosci wezla*/
     				if(currentDist + l.getPreCost() < secondDist){
     					setDistInQ(secondNode, currentDist + l.getPreCost());
     					predecessorLink.put(secondNode, l);
     					predecessorNode.put(secondNode, start);
+    					/*jesli to wezel koncowy, to znaleziono najkrosza sciezke*/
     					if(secondNode == last){
     						success = true;
     						break AlgDij;
@@ -57,7 +60,7 @@ public class Dijkstra {
     		priorities.remove(exN);
     	}
     	if (!success){
-    		//ERROR
+    		/*Blad - nie znalazlo polaczenia*/
     		return null;
     	}
     	
@@ -74,13 +77,13 @@ public class Dijkstra {
         return path;
     }
     
-    /* Funkcja pomocnicza - sprawdza czy w�z�y po��czone kraw�dzi� s� w kolejce*/
+    /* Funkcja pomocnicza - sprawdza czy wezly polaczone krawedzia sa w kolejce*/
     static boolean areBothNodesInQueue(Link l){
     	if(isInPriorityQueue(l.getFirstNode()) && isInPriorityQueue(l.getSecondNode()))
     		return true;
     	else return false;
     }
-    /* Funkcja pomocnicza - sprawdza czy w�ze� jest w kolejce*/
+    /* Funkcja pomocnicza - sprawdza czy wezel jest w kolejce*/
     static boolean isInPriorityQueue(Node n){
     	for(ExtendedNode s:priorities)
     		if(s.getNode() == n)
@@ -88,7 +91,7 @@ public class Dijkstra {
     	return false;
     }
     
-    /* Funkcja pomocnicza - pobiera warto�� "odleg�o�ci" dla danego w�z�a z kolejki*/
+    /* Funkcja pomocnicza - pobiera wartosc odleglosci dla danego wezlaa z kolejki*/
     static Double getDistFromQ(Node n){
     	for(ExtendedNode ex:priorities){
     		if(ex.getNode() == n)
@@ -96,7 +99,7 @@ public class Dijkstra {
     	}
     	return -Double.MAX_VALUE;
     }
-    /* Funkcja pomocnicza - usawia warto�� "odleg�o�ci" dla danego w�z�a w kolejce*/
+    /* Funkcja pomocnicza - ustawia wartosc odleglosci dla danego wezlaa w kolejce*/
     static void setDistInQ(Node n, Double distanceValue){
     	for(ExtendedNode ex:priorities){
     		if(ex.getNode() == n){
