@@ -50,6 +50,7 @@ public class Main {
         try {
             int nodes = 5;
             while (nodes < 10) {
+            	for(int x=0;x<10;){
                 DemandMatrices dms = new DemandMatrices();
                 DemandMatrices dmsWorking = new DemandMatrices();
                 DemandMatrices randDms = null;
@@ -96,7 +97,8 @@ public class Main {
                     //siec jest nierozwiazywalna dla tych macierzy zapotrzebowan
                     continue;
                 }
-
+                x++;
+                Stat.addStatistics(net);
                 ProblemGenerator.genNetwork(net, randDms);
                 //sprawdzamy czy napewno wyszukany routing jest prawidlowy dla tej sieci
                 if (Algorithm.checkRouting(net, dmsWorking, false, null, false, routing) == false) {
@@ -105,19 +107,21 @@ public class Main {
                     throw new Exception("Algorytm okreslil nieprawidlowy routing!");
                 }
 
-                System.out.println("wezlow: " + nodes);
-                System.out.println("z nowymi sciezkami: " + Algorithm.againCounter);
+                //System.out.println("wezlow: " + nodes);
+                //System.out.println("z nowymi sciezkami: " + Algorithm.againCounter);
+ 
+            	}
+            	nodes++;
+            	//System.out.print("STAT");
+                Stat.generateStatistics(fileStream);
 
-                nodes++;
-                Stat.addStatistics(net);
-//                Stat.generateStatistics(fileStream);
             }
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        System.out.println("STAT:\n");
-        Stat.generateStatistics();
+        //System.out.println("STAT:\n");
+        //Stat.generateStatistics();
     }
 
 //  public static void main(String[] args) {
