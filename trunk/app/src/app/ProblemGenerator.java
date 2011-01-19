@@ -103,6 +103,28 @@ public class ProblemGenerator {
                 }
             }
         }
+//        for (Link link : network.links()) {
+//            for (matrixCounter = 0; matrixCounter < demandMatrices.countMatrices(); matrixCounter++) {
+//                if (matrixCounter == 0) {
+//                    link.setPreCapacity(capacityBackup[matrixCounter].get(link.getId()));
+//                } else {
+//                    if (link.getPreCapacity() < capacityBackup[matrixCounter].get(link.getId())) {
+//                        link.setPreCapacity(capacityBackup[matrixCounter].get(link.getId()));
+//                    }
+//                }
+//            }
+//        }
+//        for (Link link : network.links()) {
+//            for (matrixCounter = 0; matrixCounter < demandMatrices.countMatrices(); matrixCounter++) {
+//                if (matrixCounter == 0) {
+//                    link.setPreCapacity(capacityBackup[matrixCounter].get(link.getId()));
+//                } else {
+//                    if (link.getPreCapacity() < capacityBackup[matrixCounter].get(link.getId())) {
+//                        link.setPreCapacity(capacityBackup[matrixCounter].get(link.getId()));
+//                    }
+//                }
+//            }
+//        }
     }
 
     public static DemandMatrices genDemandMatrices(Network network, int matricesCount, int minValue, int maxValue) {

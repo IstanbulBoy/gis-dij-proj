@@ -52,6 +52,7 @@ public class Main {
             //System.out.println("Szukam dobrych macierzy...");
             int nodes = 5;
 //            while (nodes < 6) {
+            boolean zludny_sukces=false;
             while (true) {
 //                for (int number = 10; number > 0; number--) {
                 System.out.println(" =========================================== NOWY GRAF ============================================= ");
@@ -80,16 +81,20 @@ public class Main {
 
                 //System.out.println("vvvvvvvvv");
                 ProblemGenerator.genNetwork(net, randDMs);
-                
-                if ((routes = Algorithm.properExecute(net, dmsWorking, false, null, false)) == null) {
-                    nullCount++;
-                    System.out.println("nie rozwiazywalnych grafow: " + nullCount);
-                    continue;
+
+                try {
+                    if ((routes = Algorithm.properExecute(net, dmsWorking, false, null, false)) == null) {
+                        nullCount++;
+                        System.out.println("nie rozwiazywalnych grafow: " + nullCount);
+                        continue;
+                    }
+                } catch (Exception e) {
+                    zludny_sukces = true;
                 }
                 int ic, jc;
                 for (ic = 0; ic < routes.length; ic++) {
-                    for (jc = ic+1; jc < routes.length; jc++) {
-                        System.out.print("["+ic+"] -> ["+jc+"]");
+                    for (jc = ic + 1; jc < routes.length; jc++) {
+                        System.out.print("[" + ic + "] -> [" + jc + "]");
                         Algorithm.printRoute(routes[ic][jc]);
                         System.out.println();
                     }
@@ -101,7 +106,8 @@ public class Main {
                     ProblemGenerator.genNetwork(net, randDMs);
                     Algorithm.checkExecute(net, dmsWorking, false, null, true, routes);
                     System.out.println("oszukalem w: " + allCount + " na nie rozwiazywalnych grafow: " + nullCount);
-                    return;
+                    throw new Exception("ZLUDNY SUCKCES!!");
+//                    return;
                 } else {
                     System.out.println("; dobrych: " + allCount);
                     allCount++;
@@ -113,6 +119,9 @@ public class Main {
 //                    nodes++;
                 Stat.generateStatistics(fileStream);
 //                }
+                if (zludny_sukces) {
+                    throw new Exception("SUKCES NIE ZLUDNY!!");
+                }
             }
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
