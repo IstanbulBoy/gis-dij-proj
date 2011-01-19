@@ -6,8 +6,8 @@ import java.util.List;
 import sndlib.core.network.Node;
 
 /**
- *
- * @author hmsck
+ * Klasa reprezentujaca macierz zapotrzebowan
+ * @author
  */
 public class DemandMatrix {
 

@@ -18,7 +18,7 @@ import sndlib.core.problem.RoutingPath;
 
 /**
  *
- * @author hmsck
+ * @author
  */
 public class ProblemGenerator {
 

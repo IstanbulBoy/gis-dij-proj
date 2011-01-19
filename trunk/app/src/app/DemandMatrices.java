@@ -8,8 +8,8 @@ import java.util.Set;
 import sndlib.core.network.Node;
 
 /**
- *
- * @author hmsck
+ * Klasa zbiorcza na macierze zapotrzebowan
+ * @author 
  */
 public class DemandMatrices {
 
