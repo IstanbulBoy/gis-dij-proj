@@ -221,7 +221,7 @@ public class Algorithm {
                         double demand = demandMatrix.getDemand(firstNode, secondNode);
 
                         for (RoutingLink routingLink : routes[i][j].routingLinks()) {
-                            Link link = routingLink.getLink();
+                            Link link = net.getLink(routingLink.getLink().getId());
 
                             /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
                             if (link.getPreCapacity() < demand) {
@@ -284,7 +284,7 @@ public class Algorithm {
 
                         /* wszystkie krawedzie spelniaja zapotrzebowanie, wiec odejmujemy zapotrzebowania od nich */
                         for (RoutingLink routingLink : routes[i][j].routingLinks()) {
-                            Link link = routingLink.getLink();
+                            Link link = net.getLink(routingLink.getLink().getId());
 
                             /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
                             link.setPreCapacity(link.getPreCapacity() - demand);
@@ -448,21 +448,22 @@ public class Algorithm {
                         double demand = demandMatrix.getDemand(firstNode, secondNode);
 
                         for (RoutingLink routingLink : routes[i][j].routingLinks()) {
-                            Link link = routingLink.getLink();
+                            Link link = net.getLink(routingLink.getLink().getId());
 
                             /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
-                            if (link.getPreCapacity() < demand) {
+                            if (net.getLink(link.getId()).getPreCapacity() < demand) {
                                 System.out.println("zludny sukces: " + link.getPreCapacity() + " " + net.getLink(link.getId()).getPreCapacity() + " " + link.getId());
 //                                throw new Exception("OSZUKUJE!");
+                                printGraph(net);
                                 return false;
                             }
                         }
                         /* wszystkie krawedzie spelniaja zapotrzebowanie, wiec odejmujemy zapotrzebowania od nich */
                         for (RoutingLink routingLink : routes[i][j].routingLinks()) {
-                            Link link = routingLink.getLink();
+                            Link link = net.getLink(routingLink.getLink().getId());
 
                             /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
-                            link.setPreCapacity(link.getPreCapacity() - demand);
+                            link.setPreCapacity(net.getLink(link.getId()).getPreCapacity() - demand);
                         }
                         if (printComments) {
                             printGraph(network);
@@ -474,7 +475,7 @@ public class Algorithm {
                 }
             }
             for (Link l : net.links()) {
-                l.setPreCapacity(capacityBackup.get(l.getId()));
+                net.getLink(l.getId()).setPreCapacity(capacityBackup.get(l.getId()));
             }
             new_path_counter_local = 0;
         }
@@ -635,9 +636,9 @@ public class Algorithm {
 
                     //sprawdzamy czy kazda krawedz spelnia zapotrzebowanie
                     for (RoutingLink routingLink : routes[i][j].routingLinks()) {
-                        Link link = routingLink.getLink();
+                        Link link = net.getLink(routingLink.getLink().getId());
 
-                        if (link.getPreCapacity() < demand) {
+                        if (net.getLink(link.getId()).getPreCapacity() < demand) {
 //                            printGraph(net);
 
 //                            System.out.println("pre: " + link.getPreCapacity() + " " + net.getLink(link.getId()).getPreCapacity() + " " + link.getId());
@@ -712,7 +713,7 @@ public class Algorithm {
 
                     /* wszystkie krawedzie spelniaja zapotrzebowanie, wiec odejmujemy zapotrzebowania od nich */
                     for (RoutingLink routingLink : routes[i][j].routingLinks()) {
-                        Link link = routingLink.getLink();
+                        Link link = net.getLink(routingLink.getLink().getId());
 
                         /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
                         capacities[zc].put(link.getId(), link.getPreCapacity() - demand);
@@ -747,7 +748,7 @@ public class Algorithm {
 
         }
 
-        System.out.println("znalezione sciezki alternatywne: " + againcounter);
+//        System.out.println("znalezione sciezki alternatywne: " + againcounter);
         if (againcounter > 0) {
             throw new Exception("SUKCES!!");
         }

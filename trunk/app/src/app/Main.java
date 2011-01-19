@@ -52,10 +52,10 @@ public class Main {
             //System.out.println("Szukam dobrych macierzy...");
             int nodes = 5;
 //            while (nodes < 6) {
-            boolean zludny_sukces=false;
+            boolean zludny_sukces = false;
             while (true) {
 //                for (int number = 10; number > 0; number--) {
-                System.out.println(" =========================================== NOWY GRAF ============================================= ");
+//                System.out.println(" =========================================== NOWY GRAF ============================================= ");
                 dmsWorking.clear();
                 dms.clear();
                 net = GraphGenerator.generate(nodes, 0.3, 20, 30);
@@ -73,6 +73,7 @@ public class Main {
                     //wyluskuje te ktore sa spelnialne dla sieci
                     if (Algorithm.execute(net, dms, true, dmsWorking, false) == null) {
                         ++allCount;
+                        
                         continue;
                     }
                 }
@@ -81,27 +82,36 @@ public class Main {
 
                 //System.out.println("vvvvvvvvv");
                 ProblemGenerator.genNetwork(net, randDMs);
-
+                int ic, jc;
                 try {
                     if ((routes = Algorithm.properExecute(net, dmsWorking, false, null, false)) == null) {
                         nullCount++;
-                        System.out.println("nie rozwiazywalnych grafow: " + nullCount);
+                        System.out.println("; dobrych: " + allCount);
+                        //System.out.println("nie rozwiazywalnych grafow: " + nullCount);
                         continue;
                     }
                 } catch (Exception e) {
                     zludny_sukces = true;
-                }
-                int ic, jc;
-                for (ic = 0; ic < routes.length; ic++) {
-                    for (jc = ic + 1; jc < routes.length; jc++) {
-                        System.out.print("[" + ic + "] -> [" + jc + "]");
-                        Algorithm.printRoute(routes[ic][jc]);
-                        System.out.println();
+
+
+                    for (ic = 0; ic < routes.length; ic++) {
+                        for (jc = ic + 1; jc < routes.length; jc++) {
+                            System.out.print("[" + ic + "] -> [" + jc + "]");
+                            Algorithm.printRoute(routes[ic][jc]);
+                            System.out.println();
+                        }
                     }
                 }
 
                 ProblemGenerator.genNetwork(net, randDMs);
                 if (Algorithm.checkExecute(net, dmsWorking, false, null, false, routes) == false) {
+                    for (ic = 0; ic < routes.length; ic++) {
+                        for (jc = ic + 1; jc < routes.length; jc++) {
+                            System.out.print("[" + ic + "] -> [" + jc + "]");
+                            Algorithm.printRoute(routes[ic][jc]);
+                            System.out.println();
+                        }
+                    }
                     System.out.println("zaczynam oszukiwac");
                     ProblemGenerator.genNetwork(net, randDMs);
                     Algorithm.checkExecute(net, dmsWorking, false, null, true, routes);
@@ -109,15 +119,15 @@ public class Main {
                     throw new Exception("ZLUDNY SUCKCES!!");
 //                    return;
                 } else {
-                    System.out.println("; dobrych: " + allCount);
+                    //System.out.println("; dobrych: " + allCount);
                     allCount++;
                 }
                 //System.out.println("^^^^^^^^^");
-                Stat.addStatistics();
+//                Stat.addStatistics();
 //                }
 
 //                    nodes++;
-                Stat.generateStatistics(fileStream);
+//                Stat.generateStatistics(fileStream);
 //                }
                 if (zludny_sukces) {
                     throw new Exception("SUKCES NIE ZLUDNY!!");
