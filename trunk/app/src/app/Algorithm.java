@@ -22,7 +22,6 @@ import sndlib.core.problem.RoutingPath;
 public class Algorithm {
 
     static Long solvingTime = -1l;
-//    static Network network;
     static RoutingPath[][] routes;
     static int againCounter = 0;
 
@@ -105,7 +104,7 @@ public class Algorithm {
         }
     }
 
-    public static RoutingPath[][] execute(Network net, DemandMatrices demandMatrices, boolean noTime, DemandMatrices dmsWorking, boolean printComments) throws Exception {
+    public static RoutingPath[][] extractWorkingMatrices(Network net, DemandMatrices demandMatrices, DemandMatrices dmsWorking, boolean noTime, boolean printComments) throws Exception {
 
         solvingTime = -1l;
         long programStart = 0;
@@ -331,11 +330,10 @@ public class Algorithm {
     }
 
     public static RoutingPath[][] execute(Network net, DemandMatrices demandMatrices, boolean noTime) throws Exception {
-        return execute(net, demandMatrices, noTime, null, false);
+        return extractWorkingMatrices(net, demandMatrices, null, noTime, false);
     }
 
-    public static boolean checkExecute(Network network, DemandMatrices demandMatrices, boolean noTime, DemandMatrices dmsWorking, boolean printComments, RoutingPath[][] routesBackup) throws Exception {
-
+    public static boolean checkRouting(Network network, DemandMatrices demandMatrices, boolean noTime, DemandMatrices dmsWorking, boolean printComments, RoutingPath[][] routesBackup) throws Exception {
         solvingTime = -1l;
         long programStart = 0;
         if (!noTime) {
@@ -386,8 +384,6 @@ public class Algorithm {
                         }
                         throw new Exception("Nie znalazlem sciezki");
                     } else {
-                        int i = Integer.parseInt(firstNode.getId());
-                        int j = Integer.parseInt(secondNode.getId());
                         if (printComments) {
                             printRoute(route);
                             System.out.println();
@@ -409,18 +405,14 @@ public class Algorithm {
         }
         RoutingPath routes[][] = new RoutingPath[nodeCount][nodeCount];
         cloneRoutingTable(routesBackup, routes);
-        Set<Link> failLinks = new HashSet<Link>();
-
 
         /* kopia sieci */
         for (Link link : network.links()) {
             capacityBackup.put(link.getId(), link.getPreCapacity());
         }
         matrixCounter = 0;
-        int new_path_counter_local = 0;
         int new_path_counter_global = 0;
         int break_counter = 0;
-        boolean break_matrix = false;
         /* sprawdzamy wszystkie macierze zapotrzebowan */
 
         for (DemandMatrix demandMatrix : demandMatrices.getMatrices()) {
@@ -458,10 +450,9 @@ public class Algorithm {
                             }
 
                             if (link.getPreCapacity() < demand) {
-                                System.out.println("zludny sukces: " + link.getPreCapacity() + " " + network.getLink(link.getId()).getPreCapacity() + " " + link.getId());
-//                                throw new Exception("OSZUKUJE!");
                                 printGraph(network);
 
+                                //przywracamy stara siec przed wyjsciem
                                 for (Link l : network.links()) {
                                     network.getLink(l.getId()).setPreCapacity(capacityBackup.get(l.getId()));
                                 }
@@ -485,7 +476,6 @@ public class Algorithm {
             for (Link l : network.links()) {
                 network.getLink(l.getId()).setPreCapacity(capacityBackup.get(l.getId()));
             }
-            new_path_counter_local = 0;
         }
 
         long programEnd;
@@ -505,14 +495,8 @@ public class Algorithm {
         if (net.getLink(id) != null) {
             return id;
         } else if (net.getLink(new StringBuffer(id).reverse().toString()) != null) {
-            System.out.println("ODWRACAM net");
             return new StringBuffer(id).reverse().toString();
         } else {
-            System.out.println("trying to get: " + link.getId());
-            for (Link l : net.links()) {
-                System.out.println("Link: " + l.getId());
-
-            }
             throw new Exception("Niespojnosc danych w net przy getLinkName()!");
         }
     }
@@ -523,7 +507,6 @@ public class Algorithm {
         if (capacities.containsKey(id)) {
             return id;
         } else if (capacities.containsKey(new StringBuffer(id).reverse().toString())) {
-            System.out.println("ODWRACAM cap");
             return new StringBuffer(id).reverse().toString();
         } else {
             throw new Exception("Niespojnosc danych w capacities przy getLinkName()!");
@@ -542,7 +525,7 @@ public class Algorithm {
         }
     }
 
-    public static RoutingPath[][] properExecute(Network net, DemandMatrices demandMatrices, boolean noTime, DemandMatrices dmsWorking, boolean printComments) throws Exception {
+    public static RoutingPath[][] findRouting(Network net, DemandMatrices demandMatrices, boolean noTime, DemandMatrices dmsWorking, boolean printComments) throws Exception {
         againCounter = 0;
         solvingTime = -1l;
         long programStart = 0;
@@ -550,7 +533,6 @@ public class Algorithm {
             programStart = System.currentTimeMillis();
         }
         int againcounter = 0;
-        int test = 0;
         List<Node> nodes = new ArrayList<Node>();
         Map<String, Double> capacityBackup = new HashMap<String, Double>();
 
@@ -632,9 +614,7 @@ public class Algorithm {
         Set<Link> failLinks = new HashSet<Link>();
 
 
-
         int new_path_counter_local = 0;
-        int new_path_counter_global = 0;
         int break_counter = 0;
 
         DemandMatrix matrices[] = new DemandMatrix[demandMatrices.countMatrices()];
@@ -670,32 +650,7 @@ public class Algorithm {
 
                 for (zc = 0; zc < matrices.length; zc++) {
                     int demand = matrices[zc].getDemand(firstNode, secondNode);
-
-                    if (capacities[zc].size() != capacityFailBackup[zc].size()) {
-                        for (String key1S : capacities[zc].keySet()) {
-                            System.out.println("cap : " + key1S);
-                        }
-                        for (String key2S : capacityFailBackup[zc].keySet()) {
-                            System.out.println("capback : " + key2S);
-                        }
-                        throw new Exception("niespojnosc danych properExecute capacities[zc].size() != capacityFailBackup[zc].size()");
-                    }
-                    for (String key : capacities[zc].keySet()) {
-                        if (!capacityFailBackup[zc].containsKey(key)) {
-                            for (String key1S : capacities[zc].keySet()) {
-                                System.out.println("cap : " + key1S);
-                            }
-                            for (String key2S : capacityFailBackup[zc].keySet()) {
-                                System.out.println("capback : " + key2S);
-                            }
-                            throw new Exception("niespojnosc danych properExecute !capacityFailBackup[zc].containsKey(key)");
-                        }
-                    }
-
-                    test++;
-//                    System.out.println(ic + " " + jc + " " + zc);
-//                    printGraph(net);
-
+                    
                     if (printComments) {
                         System.out.print("[" + firstNode.getId() + "] -> [" + secondNode.getId() + "] ");
                         printRoute(routes[i][j]);
@@ -709,17 +664,9 @@ public class Algorithm {
 
                     //sprawdzamy czy kazda krawedz spelnia zapotrzebowanie
                     for (RoutingLink routingLink : routes[i][j].routingLinks()) {
-
                         Link link = net.getLink(getLinkName(routingLink.getLink(), capacities[zc]));
 
-                        if (link == null) {
-                            printGraph(net);
-                            System.out.println(getLinkName(routingLink.getLink(), capacities[zc]));
-                        }
                         if (net.getLink(link.getId()).getPreCapacity() < demand) {
-//                            printGraph(net);
-
-//                            System.out.println("pre: " + link.getPreCapacity() + " " + net.getLink(link.getId()).getPreCapacity() + " " + link.getId());
                             if (!failLinks.contains(link)) {
                                 failLinks.add(link);
                                 found = true;
@@ -730,52 +677,32 @@ public class Algorithm {
                         againcounter++;
                         /* usuwamy przepelnione krawedzie */
 
-//                        System.out.println("v v v v v v v v v v v v v v v v v v v v v v v v ");
-//                        System.out.println("aktualny graf: ");
-//                        printGraph(net);
                         for (Link link : failLinks) {
                             net.getLink(link.getId()).setPreCapacity(0);
                         }
 
-                        for (Link link : failLinks) {
-                            if (printComments) {
-//                                System.out.println("Zeruje sciezke " + link.getId() + "[" + link.getFirstNode().getId() + "] -> [" + link.getSecondNode().getId() + "]");
-                            }
+                        if (printComments) {
+                            System.out.print("current path [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] ");
+                            printRoute(routes[i][j]);
+                            System.out.println(" demand: (" + demand + ") ");
+
+                            System.out.println("new path for [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + demand + "] demand matrix: " + zc);
+                            printGraph(net);
                         }
 
-//                        if (printComments) {
-//                        System.out.print("current path [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] ");
-//                        printRoute(routes[i][j]);
-//                        System.out.println(" demand: (" + demand + ") ");
-//
-//                        System.out.println("new path for [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + demand + "] demand matrix: " + zc);
-//                        printGraph(net);
-
-//                        }
-
                         /* szukamy nowego polaczenia */
-                        //System.out.println("F:"+firstNode+" S:"+secondNode+"\nnet:"+network);
                         route = Dijkstra.findRoute(firstNode, secondNode, demand, net);
 
                         if (route == null) {
-//                            System.out.println("test " + test + " " + ic + " " + jc + " " + zc);
 
                             for (Link l : net.links()) {
                                 net.getLink(l.getId()).setPreCapacity(capacityBackup.get(l.getId()));
                             }
                             againCounter = -againcounter;
-//                            throw new Exception("Nie znalazlem sciezki");
                             return null;
 
                         }
                         routes[i][j] = routes[j][i] = route;
-
-//                        if (printComments) {
-//                        System.out.println("nowa: ");
-//                        printRoute(route);
-//                        System.out.println();
-//                        System.out.println("^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ");
-//                        }
 
                         new_path_counter_local++;
 
@@ -803,26 +730,6 @@ public class Algorithm {
                     if (printComments) {
                         printGraph(net);
                     }
-                    if (capacities[zc].size() != capacityFailBackup[zc].size()) {
-                        for (String key1S : capacities[zc].keySet()) {
-                            System.out.println("cap : " + key1S);
-                        }
-                        for (String key2S : capacityFailBackup[zc].keySet()) {
-                            System.out.println("capback : " + key2S);
-                        }
-                        throw new Exception("niespojnosc danych properExecute capacities[zc].size() != capacityFailBackup[zc].size()");
-                    }
-                    for (String key : capacities[zc].keySet()) {
-                        if (!capacityFailBackup[zc].containsKey(key)) {
-                            for (String key1S : capacities[zc].keySet()) {
-                                System.out.println("cap : " + key1S);
-                            }
-                            for (String key2S : capacityFailBackup[zc].keySet()) {
-                                System.out.println("capback : " + key2S);
-                            }
-                            throw new Exception("niespojnosc danych properExecute !capacityFailBackup[zc].containsKey(key)");
-                        }
-                    }
                 }
 
                 if (!spr) {
@@ -832,9 +739,7 @@ public class Algorithm {
                         }
                     }
                     failLinks.clear();
-                }
-                if (spr) {
-//                    System.out.println("test " + test + " " + ic + " " + jc + " " + zc);
+                } else {
                     jc--;
                 }
             }
@@ -850,22 +755,8 @@ public class Algorithm {
             solvingTime = programEnd - programStart;
         }
         if (printComments) {
-            System.out.println("nowe sciezki: " + new_path_counter_global + "\n przerwalem: " + break_counter + "\n dla ilosci macierzy: " + matrixCounter);
+            System.out.println("nowe sciezki: " + new_path_counter_local + "\n przerwalem: " + break_counter + "\n dla ilosci macierzy: " + matrixCounter);
 
-        }
-        if (capacityBackup.size() != net.linkCount()) {
-            throw new Exception("niespojnosc danych: count " + capacityBackup.size() + " " + net.linkCount());
-        }
-        for (Link link : net.links()) {
-            if (capacityBackup.get(link.getId()) != link.getPreCapacity()) {
-
-                throw new Exception("niespojnosc danych: LinkID " + link.getId() + " backup: " + capacityBackup.get(link.getId()) + " orig: " + link.getPreCapacity());
-            }
-        }
-
-//        System.out.println("znalezione sciezki alternatywne: " + againcounter);
-        if (againcounter > 0) {
-//            throw new Exception("SUKCES!!");
         }
         againCounter = againcounter;
         return routes;
