@@ -15,20 +15,20 @@ public class Stat {
 	public static void addStatistics(){
 		Long sum;
 		int count;
-		if(timeForNodes.containsKey(Algorithm.network.nodeCount())){
-			sum=timeForNodes.remove(Algorithm.network.nodeCount());
-			sum+=Algorithm.solvingTime;
-			timeForNodes.put(Algorithm.network.nodeCount(), sum);
-			
-			count = timeForNodesCount.remove(Algorithm.network.nodeCount());
-			count++;
-			timeForNodesCount.put(Algorithm.network.nodeCount(), count);
-		}
-		else {
-			timeForNodes.put(Algorithm.network.nodeCount(), Algorithm.solvingTime);
-			timeForNodesCount.put(Algorithm.network.nodeCount(), 1);
-			
-		}
+//		if(timeForNodes.containsKey(Algorithm.network.nodeCount())){
+//			sum=timeForNodes.remove(Algorithm.network.nodeCount());
+//			sum+=Algorithm.solvingTime;
+//			timeForNodes.put(Algorithm.network.nodeCount(), sum);
+//
+//			count = timeForNodesCount.remove(Algorithm.network.nodeCount());
+//			count++;
+//			timeForNodesCount.put(Algorithm.network.nodeCount(), count);
+//		}
+//		else {
+//			timeForNodes.put(Algorithm.network.nodeCount(), Algorithm.solvingTime);
+//			timeForNodesCount.put(Algorithm.network.nodeCount(), 1);
+//
+//		}
 	}
 	/* Funkcja generuj�ca i zapisuj�ca statystyki z rozwi�zanych do tej pory problem�w*/
 	public static void generateStatistics(PrintStream... printstream){
