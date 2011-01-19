@@ -20,7 +20,6 @@ public class Dijkstra {
     
     /* Zmodyfikowany algorytm Dijkstra*/
     public static RoutingPath findRoute(Node first, Node last, Integer maxDemand, Network networkArg) {
-    	//System.out.println("--findroute: first="+first.getId()+" last="+last.getId()+" net="+networkArg+"\n");
         priorities.clear();
         predecessorLink.clear();
         predecessorNode.clear();
