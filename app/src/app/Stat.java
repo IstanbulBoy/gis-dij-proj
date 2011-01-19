@@ -12,7 +12,7 @@ import sndlib.core.problem.RoutingPath.*;
 public class Stat {
 	static HashMap<Integer, Long> timeForNodes = new HashMap<Integer, Long>();
 	static HashMap<Integer, Integer> timeForNodesCount = new HashMap<Integer, Integer>();
-	/* Funkcja dodajï¿½ca statytykï¿½ z danej sieci do danych*/
+	/* Funkcja dodajaca statytyke½ z danej sieci do danych*/
 	public static void addStatistics(Network network){
 		Long sum;
 		int count;
@@ -30,8 +30,9 @@ public class Stat {
 			timeForNodesCount.put(network.nodeCount(), 1);
 
 		}
+		//System.out.print("["+network.nodeCount()+":"+Algorithm.solvingTime+"]");
 	}
-	/* Funkcja generujï¿½ca i zapisujï¿½ca statystyki z rozwiï¿½zanych do tej pory problemï¿½w*/
+	/* Funkcja generujaca i zapisujaca statystyki z rozwiazanych do tej pory problemow*/
 	public static void generateStatistics(PrintStream... printstream){
 		PrintStream ps = printstream.length == 0 ? System.out : printstream[0];
 		HashMap<Integer, Double> meanTimeForNodes = new HashMap<Integer, Double>();
@@ -41,7 +42,7 @@ public class Stat {
 			Double meanTime = ((long)timeForNodes.get(key))/((double)(1d*timeForNodesCount.get(key)));
 			meanTimeForNodes.put(key, meanTime);
 			ps.println(key + "\t"+meanTime);
-			System.out.println(key + "\t"+meanTime);
+			//System.out.println(key + "\t"+meanTime);
 		}
 		timeForNodes.clear();
 		timeForNodesCount.clear();
