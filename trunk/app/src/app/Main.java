@@ -20,7 +20,7 @@ import sndlib.core.problem.RoutingPath;
 public class Main {
 
     static Network net = new Network();
-    static int MATRICES_COUNT = 300;
+    static int TEST_MATRICES_COUNT = 300;
 
     enum BlockType {
 
@@ -64,7 +64,7 @@ public class Main {
 
                 net = GraphGenerator.generate(nodes, 0.3, 20, 30);
 
-                while (dmsWorking.countMatrices() < MATRICES_COUNT) {
+                while (dmsWorking.countMatrices() < TEST_MATRICES_COUNT) {
                     dmsWorking.clear();
                     dms.clear();
                     dms = ProblemGenerator.genDemandMatrices(net, 1000, 10, 100);
@@ -79,10 +79,10 @@ public class Main {
                         continue;
                     }
                 }
-                dmsWorking = dmsWorking.getSubDemandMatrices(MATRICES_COUNT);
+                dmsWorking = dmsWorking.getSubDemandMatrices(TEST_MATRICES_COUNT);
 
                 ProblemGenerator.genNetwork(net, randDms);
-                routing = Algorithm.findRouting(net, dmsWorking.getRandMatrices(MATRICES_COUNT), false, null, false);
+                routing = Algorithm.findRouting(net, dmsWorking.getRandMatrices(TEST_MATRICES_COUNT), false, null, false);
                 if (routing == null) {
                     //nie znaleziono routingu dla tych macierzy
                     continue;
