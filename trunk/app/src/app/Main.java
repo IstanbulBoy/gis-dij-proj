@@ -96,7 +96,7 @@ public class Main {
                     routing = Algorithm.properExecute(net, dmsWorking, false, null, false);
                     if (routing == null) {
                         nullCount++;
-                        System.out.println("; zlych: " + Algorithm.againCounter);
+//                        System.out.println("; zlych: " + Algorithm.againCounter);
                         //System.out.println("nie rozwiazywalnych grafow: " + nullCount);
                         continue;
                     } else {
@@ -136,8 +136,8 @@ public class Main {
                 } else {
                     //System.out.println("; dobrych: " + allCount);
                     if (zludny_sukces) {
-                        System.out.println("nie oszukuje!!");
-                        Algorithm.checkExecute(net, dmsWorking, false, null, true, routing);
+                        System.out.println("nie oszukuje!! " + Algorithm.againCounter);
+
                     }
                     allCount++;
                 }
@@ -150,7 +150,13 @@ public class Main {
 //                }
                 if (zludny_sukces) {
                     sukces++;
-                    throw new Exception("SUKCES NIE ZLUDNY!!");
+//                    System.out.println("SUKCES NIE ZLUDNY!! " + sukces);
+                    System.out.println("; zlych: " + Algorithm.againCounter);
+                     System.out.println("; dobrych: " + notNullCount);
+                     System.out.println("; dobrych z nowymi sciezkami: " + sukces);
+                    Algorithm.checkExecute(net, dmsWorking, false, null, true, routing);
+                    zludny_sukces = false;
+//                    throw new Exception("SUKCES NIE ZLUDNY!!");
                 }
             }
         } catch (Exception ex) {

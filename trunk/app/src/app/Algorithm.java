@@ -730,26 +730,26 @@ public class Algorithm {
                         againcounter++;
                         /* usuwamy przepelnione krawedzie */
 
-                        System.out.println("v v v v v v v v v v v v v v v v v v v v v v v v ");
-                        System.out.println("aktualny graf: ");
-                        printGraph(net);
+//                        System.out.println("v v v v v v v v v v v v v v v v v v v v v v v v ");
+//                        System.out.println("aktualny graf: ");
+//                        printGraph(net);
                         for (Link link : failLinks) {
                             net.getLink(link.getId()).setPreCapacity(0);
                         }
 
                         for (Link link : failLinks) {
                             if (printComments) {
-                                System.out.println("Zeruje sciezke " + link.getId() + "[" + link.getFirstNode().getId() + "] -> [" + link.getSecondNode().getId() + "]");
+//                                System.out.println("Zeruje sciezke " + link.getId() + "[" + link.getFirstNode().getId() + "] -> [" + link.getSecondNode().getId() + "]");
                             }
                         }
 
 //                        if (printComments) {
-                        System.out.print("current path [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] ");
-                        printRoute(routes[i][j]);
-                        System.out.println(" demand: (" + demand + ") ");
-
-                        System.out.println("new path for [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + demand + "] demand matrix: " + zc);
-                        printGraph(net);
+//                        System.out.print("current path [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] ");
+//                        printRoute(routes[i][j]);
+//                        System.out.println(" demand: (" + demand + ") ");
+//
+//                        System.out.println("new path for [" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + demand + "] demand matrix: " + zc);
+//                        printGraph(net);
 
 //                        }
 
@@ -758,7 +758,7 @@ public class Algorithm {
                         route = Dijkstra.findRoute(firstNode, secondNode, demand, net);
 
                         if (route == null) {
-                            System.out.println("test " + test + " " + ic + " " + jc + " " + zc);
+//                            System.out.println("test " + test + " " + ic + " " + jc + " " + zc);
 
                             for (Link l : net.links()) {
                                 net.getLink(l.getId()).setPreCapacity(capacityBackup.get(l.getId()));
@@ -771,10 +771,10 @@ public class Algorithm {
                         routes[i][j] = routes[j][i] = route;
 
 //                        if (printComments) {
-                        System.out.println("nowa: ");
-                        printRoute(route);
-                        System.out.println();
-                        System.out.println("^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ");
+//                        System.out.println("nowa: ");
+//                        printRoute(route);
+//                        System.out.println();
+//                        System.out.println("^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ");
 //                        }
 
                         new_path_counter_local++;
@@ -834,7 +834,7 @@ public class Algorithm {
                     failLinks.clear();
                 }
                 if (spr) {
-                    System.out.println("test " + test + " " + ic + " " + jc + " " + zc);
+//                    System.out.println("test " + test + " " + ic + " " + jc + " " + zc);
                     jc--;
                 }
             }
