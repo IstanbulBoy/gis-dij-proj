@@ -49,7 +49,7 @@ public class Main {
         }
         int nullCount = 0, allCount = 0, notNullCount = 0;
         int ic, jc;
-        int suckes = 0;
+        int sukces = 0;
         try {
             //System.out.println("Szukam dobrych macierzy...");
             int nodes = 5;
