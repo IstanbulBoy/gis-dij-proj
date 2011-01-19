@@ -447,11 +447,12 @@ public class Algorithm {
                         double demand = demandMatrix.getDemand(firstNode, secondNode);
 
                         for (RoutingLink routingLink : routes[i][j].routingLinks()) {
-                            Link link = network.getLink(routingLink.getLink().getId());
+                            Link link = network.hasLink(routingLink.getLink().getId()) ?network.getLink(routingLink.getLink().getId()): network.getLink(new StringBuffer(routingLink.getLink().getId()).reverse().toString()) ;
 
                             /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
                             if (network == null || link == null) {
                                 printGraph(network);
+                                System.out.println(routingLink.getLink().getId());
                             }
 
                             if (link.getPreCapacity() < demand) {
@@ -463,7 +464,7 @@ public class Algorithm {
                         }
                         /* wszystkie krawedzie spelniaja zapotrzebowanie, wiec odejmujemy zapotrzebowania od nich */
                         for (RoutingLink routingLink : routes[i][j].routingLinks()) {
-                            Link link = network.getLink(routingLink.getLink().getId());
+                            Link link = network.hasLink(routingLink.getLink().getId()) ?network.getLink(routingLink.getLink().getId()): network.getLink(new StringBuffer(routingLink.getLink().getId()).reverse().toString());
 
                             /* czy wszystkie krawedzie spelniaja zapotrzebowanie */
                             link.setPreCapacity(network.getLink(link.getId()).getPreCapacity() - demand);
@@ -639,7 +640,7 @@ public class Algorithm {
 
                     //sprawdzamy czy kazda krawedz spelnia zapotrzebowanie
                     for (RoutingLink routingLink : routes[i][j].routingLinks()) {
-                        Link link = net.getLink(routingLink.getLink().getId());
+                        Link link = network.hasLink(routingLink.getLink().getId()) ?network.getLink(routingLink.getLink().getId()): network.getLink(new StringBuffer(routingLink.getLink().getId()).reverse().toString()) ;
 
                         if (net.getLink(link.getId()).getPreCapacity() < demand) {
 //                            printGraph(net);
