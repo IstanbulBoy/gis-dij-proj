@@ -47,44 +47,72 @@ public class Main {
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        int nullCount = 0, allCount = 0;
         try {
             //System.out.println("Szukam dobrych macierzy...");
             int nodes = 5;
-            while (nodes < 6) {
-                for (int number = 10; number > 0; number--) {
+//            while (nodes < 6) {
+            while (true) {
+//                for (int number = 10; number > 0; number--) {
+                System.out.println(" =========================================== NOWY GRAF ============================================= ");
+                dmsWorking.clear();
+                dms.clear();
+                net = GraphGenerator.generate(nodes, 0.3, 20, 30);
+                DemandMatrices randDMs = null;
+                while (dmsWorking.countMatrices() < 30) {
                     dmsWorking.clear();
                     dms.clear();
-                    net = GraphGenerator.generate(nodes, 0.3, 20, 30);
-                    DemandMatrices randDMs = null;
-                    while (dmsWorking.countMatrices() < 300) {
-                        dmsWorking.clear();
-                        dms.clear();
-                        dms = ProblemGenerator.genDemandMatrices(net, 1000, 1.0, 10.0);
-                        randDMs = dms.getRandMatrices(300);
-                        ProblemGenerator.genNetwork(net, randDMs);
-                        //usuwam macierze ktore posluzyly do tworzenia sieci
-                        for (DemandMatrix dm : randDMs.getMatrices()) {
-                            dms.removeDemandMatrix(dm);
-                        }
-                        //wyluskuje te ktore sa spelnialne dla sieci
-                        Algorithm.execute(net, dms, true, dmsWorking, false);
-                    }
-
-                    dmsWorking = dmsWorking.getSubDemandMatrices(300);
-                    //System.out.println("vvvvvvvvv");
-                    if ((routes = Algorithm.properExecute(net, dmsWorking, false, null, false)) == null) {
-                        return;
-                    }
+                    dms = ProblemGenerator.genDemandMatrices(net, 1000, 10, 100);
+                    randDMs = dms.getRandMatrices(700);
                     ProblemGenerator.genNetwork(net, randDMs);
-                    if (Algorithm.checkExecute(net, dmsWorking, false, null, false, routes)) {
-                        return;
+                    //usuwam macierze ktore posluzyly do tworzenia sieci
+                    for (DemandMatrix dm : randDMs.getMatrices()) {
+                        dms.removeDemandMatrix(dm);
                     }
-                    //System.out.println("^^^^^^^^^");
-                    Stat.addStatistics();
+                    //wyluskuje te ktore sa spelnialne dla sieci
+                    if (Algorithm.execute(net, dms, true, dmsWorking, false) == null) {
+                        ++allCount;
+                        continue;
+                    }
                 }
-                nodes++;
+
+                dmsWorking = dmsWorking.getSubDemandMatrices(30);
+
+                //System.out.println("vvvvvvvvv");
+                ProblemGenerator.genNetwork(net, randDMs);
+                
+                if ((routes = Algorithm.properExecute(net, dmsWorking, false, null, false)) == null) {
+                    nullCount++;
+                    System.out.println("nie rozwiazywalnych grafow: " + nullCount);
+                    continue;
+                }
+                int ic, jc;
+                for (ic = 0; ic < routes.length; ic++) {
+                    for (jc = ic+1; jc < routes.length; jc++) {
+                        System.out.print("["+ic+"] -> ["+jc+"]");
+                        Algorithm.printRoute(routes[ic][jc]);
+                        System.out.println();
+                    }
+                }
+
+                ProblemGenerator.genNetwork(net, randDMs);
+                if (Algorithm.checkExecute(net, dmsWorking, false, null, false, routes) == false) {
+                    System.out.println("zaczynam oszukiwac");
+                    ProblemGenerator.genNetwork(net, randDMs);
+                    Algorithm.checkExecute(net, dmsWorking, false, null, true, routes);
+                    System.out.println("oszukalem w: " + allCount + " na nie rozwiazywalnych grafow: " + nullCount);
+                    return;
+                } else {
+                    System.out.println("; dobrych: " + allCount);
+                    allCount++;
+                }
+                //System.out.println("^^^^^^^^^");
+                Stat.addStatistics();
+//                }
+
+//                    nodes++;
                 Stat.generateStatistics(fileStream);
+//                }
             }
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
@@ -214,7 +242,7 @@ public class Main {
             String m[] = lines[n].split("\\s+");
 
             for (i = 1; i < nodes.length; i++) {
-                dm.addDemand(Double.valueOf(m[i]), m[0], nodes[i - 1]);
+                dm.addDemand(Integer.valueOf(m[i]), m[0], nodes[i - 1]);
             }
         }
 

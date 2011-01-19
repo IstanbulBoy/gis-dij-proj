@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import sndlib.core.network.Link;
 import sndlib.core.network.Network;
 import sndlib.core.network.Node;
@@ -55,7 +56,7 @@ public class ProblemGenerator {
                     int i = Integer.parseInt(firstNode.getId());
                     int j = Integer.parseInt(secondNode.getId());
 
-                    double demand = dmtmp.getDemand(firstNode, secondNode);
+                    int demand = dmtmp.getDemand(firstNode, secondNode);
 
                     //najlepszy routing - bierzemy tylko pod uwage koszty
                     routes[i][j] = routes[j][i] =
@@ -107,17 +108,16 @@ public class ProblemGenerator {
         }
     }
 
-    public static DemandMatrices genDemandMatrices(Network network, int matricesCount, double minValue, double maxValue) {
+    public static DemandMatrices genDemandMatrices(Network network, int matricesCount, int minValue, int maxValue) {
         DemandMatrices dms = new DemandMatrices();
-        double val = maxValue - minValue;
+        int val = maxValue - minValue;
+           Random gen = new Random();
 
         while (matricesCount-- > 0) {
             DemandMatrix m = new DemandMatrix();
             for (Node n1 : network.nodes()) {
                 for (Node n2 : network.nodes()) {
-                    BigDecimal bd = new BigDecimal((Math.random() * val) + minValue);
-                    bd = bd.setScale(2, BigDecimal.ROUND_UP);
-                    m.addDemand(bd.doubleValue(), n1, n2);
+                    m.addDemand(gen.nextInt(val)+minValue, n1, n2);
                 }
             }
             dms.addDemandMatrix(m);

@@ -12,7 +12,7 @@ import sndlib.core.network.Node;
 public class DemandMatrix {
 
     protected static int MAX_NODES = 100;
-    protected double[][] matrix = new double[MAX_NODES][MAX_NODES];
+    protected int[][] matrix = new int[MAX_NODES][MAX_NODES];
     protected List<String> nodes = new ArrayList<String>();
 
     public DemandMatrix() {
@@ -25,11 +25,11 @@ public class DemandMatrix {
         }
     }
 
-    public Double getDemand(Node first, Node second) {
+    public int getDemand(Node first, Node second) {
        return getDemand(first.getId(), second.getId());
     }
 
-    public Double getDemand(String first, String second) {
+    public int getDemand(String first, String second) {
         int i, j;
 
         i = nodes.indexOf(first);
@@ -38,20 +38,20 @@ public class DemandMatrix {
         return matrix[i][j];
     }
 
-    public void addDemand(double demand, Node first, Node second) throws ArrayIndexOutOfBoundsException {
+    public void addDemand(int demand, Node first, Node second) throws ArrayIndexOutOfBoundsException {
         int i, j;
         i = addNode(first);
         j = addNode(second);
         matrix[i][j] = matrix[j][i] = demand;
-        matrix[i][i] = matrix[j][j] = -1d;
+        matrix[i][i] = matrix[j][j] = -1;
     }
 
-    public void addDemand(double demand, String first, String second) throws ArrayIndexOutOfBoundsException {
+    public void addDemand(int demand, String first, String second) throws ArrayIndexOutOfBoundsException {
         int i, j;
         i = addNode(first);
         j = addNode(second);
         matrix[i][j] = matrix[j][i] = demand;
-        matrix[i][i] = matrix[j][j] = -1d;
+        matrix[i][i] = matrix[j][j] = -1;
     }
     
     protected int addNode(Node node) throws ArrayIndexOutOfBoundsException {
