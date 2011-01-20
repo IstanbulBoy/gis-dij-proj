@@ -105,10 +105,11 @@ public class Algorithm {
     }
 
     /**
-     * Wyłuskuje macierze ktore sa rozwiazywalne na wejsciowym grafie i zwraca w dmsWorking
+     * Wyłuskuje macierze ktore sa rozwiazywalne na wejsciowym grafie i zwraca je w dmsWorking
      * na podstawie których bedzie pozniej dostosowywana siec pod wzgledem przepustowosci.
      * Metoda szuka routingu dla kazdej macierzy z osobna, tzn odwracajac kolejnosc sprawdzania macierzy zapotrzebowan
-     * routingi zostana wyznaczone inaczej, dzieki temu przepustowosci na grafie beda mialy racjonalne wartosci
+     * routingi zostana wyznaczone inaczej, dzieki temu przepustowosci na grafie beda mialy racjonalne wartosci i nie
+     * powinny wpływać na routingi znajdowane przez zasadnicza metode realizujaca nasz algorytm
      */
     public static RoutingPath[][] extractWorkingMatrices(Network net, DemandMatrices demandMatrices, DemandMatrices dmsWorking, boolean noTime, boolean printComments) throws Exception {
 
@@ -327,8 +328,8 @@ public class Algorithm {
     }
 
     /*
-     * Sprawdza czy wyszukane routingi spełniają macierze zapotrzebowań dla danej sieci - "uruchamiamy" kazda macierz zapotrzebowan
-     * i sprawdzamy czy nei ma przepelnionych krawedzi
+     * Sprawdza czy wyszukane routingi spełniają macierze zapotrzebowań dla danej sieci - "uruchamiamy" po kolei kazda macierz zapotrzebowan
+     * i sprawdzamy czy nie ma przepelnionych krawedzi
      */
     public static boolean checkRouting(Network network, DemandMatrices demandMatrices, boolean noTime, DemandMatrices dmsWorking, boolean printComments, RoutingPath[][] routesBackup) throws Exception {
         
@@ -576,8 +577,10 @@ public class Algorithm {
                     if (printComments) {
                         System.out.print("[" + firstNode.getId() + "] -> [" + secondNode.getId() + "] [" + maxDemMatrix.getDemand(firstNode, secondNode) + "] ");
                     }
+                    /* szukamy sciezki dla maksymalnego zapotrzebowania */
                     route = Dijkstra.findRoute(firstNode, secondNode, maxDemMatrix.getDemand(firstNode, secondNode), net);
 
+                    /* jesli nie znajdzie to nie ma sensu rozwiazywac dalej grafu */
                     if (route == null) {
                         if (printComments) {
                             printGraph(net);
