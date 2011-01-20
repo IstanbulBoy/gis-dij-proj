@@ -21,10 +21,10 @@ public class Main {
 
     static Network net = new Network();
     //ilosc macierzy zapotrzebowan dla ktorych wyznaczamy routing
-    static int ROUTING_MATRICES_COUNT = 100;
+    static int ROUTING_MATRICES_COUNT = 30;
     //ilosc generowanych wszystkich macierzy zapotrzebowan, potrzebnych rowniez
     //do wyznaczenia przepustowosci na krawedziach
-    static int DEMAND_MATRICES_COUNT = 500; 
+    static int DEMAND_MATRICES_COUNT = 1000;
 
     enum BlockType {
 
@@ -52,8 +52,8 @@ public class Main {
 
         int ic, jc;
         try {
-            int nodes = 5;
-            while (nodes < 20) {
+            int nodes = 20;
+            while (nodes < 21) {
                 for (int x = 0; x < 10;) {
                     DemandMatrices dms = new DemandMatrices();
                     DemandMatrices dmsWorking = new DemandMatrices();
@@ -68,7 +68,7 @@ public class Main {
                     }
 
                     //generujemy siec
-                    net = GraphGenerator.generate(nodes, 0.3, 20, 30);
+                    net = GraphGenerator.generate(nodes, 0.5, 20, 30);
 
                     //szukamy co najmniej ROUTING_MATRICES_COUNT
                     while (dmsWorking.countMatrices() < ROUTING_MATRICES_COUNT) {
@@ -77,7 +77,7 @@ public class Main {
                         //generujemy duzo macierzy
                         dms = ProblemGenerator.genDemandMatrices(net, DEMAND_MATRICES_COUNT, 10, 100);
                         //wybieramy losowo pewna ich czesc
-                        randDms = dms.getRandMatrices(DEMAND_MATRICES_COUNT/5);
+                        randDms = dms.getRandMatrices(DEMAND_MATRICES_COUNT/2);
                         //uzupelniamy przepustowosci sieci net (prezpustowosci krawedzi) tak aby byla spelniona
                         //kazda siec z randDms
                         ProblemGenerator.genNetwork(net, randDms);
@@ -108,7 +108,7 @@ public class Main {
                     Stat.addStatistics(net);
                     ProblemGenerator.genNetwork(net, randDms);
                     //sprawdzamy czy napewno wyszukany routing jest prawidlowy dla tej sieci
-                    if (Algorithm.checkRouting(net, dmsWorking, false, null, false, routing) == false) {
+                    if (Algorithm.checkRouting(net, dmsWorking.getRandMatrices(ROUTING_MATRICES_COUNT), false, null, false, routing) == false) {
                         ProblemGenerator.genNetwork(net, randDms);
                         Algorithm.checkRouting(net, dmsWorking, false, null, true, routing);
                         throw new Exception("Algorytm okreslil nieprawidlowy routing!");
