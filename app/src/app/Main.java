@@ -20,7 +20,11 @@ import sndlib.core.problem.RoutingPath;
 public class Main {
 
     static Network net = new Network();
-    static int TEST_MATRICES_COUNT = 30;
+    //ilosc macierzy zapotrzebowan dla ktorych wyznaczamy routing
+    static int ROUTING_MATRICES_COUNT = 100;
+    //ilosc generowanych wszystkich macierzy zapotrzebowan, potrzebnych rowniez
+    //do wyznaczenia przepustowosci na krawedziach
+    static int DEMAND_MATRICES_COUNT = 500; 
 
     enum BlockType {
 
@@ -66,14 +70,14 @@ public class Main {
                     //generujemy siec
                     net = GraphGenerator.generate(nodes, 0.3, 20, 30);
 
-                    //szukamy co najmniej TEST_MATRICES_COUNT
-                    while (dmsWorking.countMatrices() < TEST_MATRICES_COUNT) {
+                    //szukamy co najmniej ROUTING_MATRICES_COUNT
+                    while (dmsWorking.countMatrices() < ROUTING_MATRICES_COUNT) {
                         dmsWorking.clear();
                         dms.clear();
                         //generujemy duzo macierzy
-                        dms = ProblemGenerator.genDemandMatrices(net, 1000, 10, 100);
+                        dms = ProblemGenerator.genDemandMatrices(net, DEMAND_MATRICES_COUNT, 10, 100);
                         //wybieramy losowo pewna ich czesc
-                        randDms = dms.getRandMatrices(700);
+                        randDms = dms.getRandMatrices(DEMAND_MATRICES_COUNT/5);
                         //uzupelniamy przepustowosci sieci net (prezpustowosci krawedzi) tak aby byla spelniona
                         //kazda siec z randDms
                         ProblemGenerator.genNetwork(net, randDms);
@@ -89,12 +93,12 @@ public class Main {
                         }
                     }
                     //mozemy miec wiecej macierzy spelniajacych graf, wyluskujemy stala ilosc dla kazdej sieci
-                    dmsWorking = dmsWorking.getSubDemandMatrices(TEST_MATRICES_COUNT);
+                    dmsWorking = dmsWorking.getSubDemandMatrices(ROUTING_MATRICES_COUNT);
 
                     ProblemGenerator.genNetwork(net, randDms);
                     //wyszukujemy routing z macierzy zapotrzebowan ktore nie byly brane pod uwage
                     //pryz ustalaniu przepustowosci na grafie
-                    routing = Algorithm.findRouting(net, dmsWorking.getRandMatrices(TEST_MATRICES_COUNT), false, null, false);
+                    routing = Algorithm.findRouting(net, dmsWorking.getRandMatrices(ROUTING_MATRICES_COUNT), false, null, false);
                     if (routing == null) {
                         //nie znaleziono routingu dla tych macierzy
                         //siec jest nierozwiazywalna dla tych macierzy zapotrzebowan
