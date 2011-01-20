@@ -49,70 +49,73 @@ public class Main {
         int ic, jc;
         try {
             int nodes = 5;
-            while (nodes < 10) {
-            	for(int x=0;x<10;){
-                DemandMatrices dms = new DemandMatrices();
-                DemandMatrices dmsWorking = new DemandMatrices();
-                DemandMatrices randDms = null;
+            while (nodes < 20) {
+                for (int x = 0; x < 10;) {
+                    DemandMatrices dms = new DemandMatrices();
+                    DemandMatrices dmsWorking = new DemandMatrices();
+                    DemandMatrices randDms = null;
 
-                if (routing != null) {
-                    for (ic = 0; ic < routing.length; ic++) {
-                        for (jc = 0; jc < routing.length; jc++) {
-                            routing[ic][jc] = null;
+                    if (routing != null) {
+                        for (ic = 0; ic < routing.length; ic++) {
+                            for (jc = 0; jc < routing.length; jc++) {
+                                routing[ic][jc] = null;
+                            }
                         }
                     }
-                }
 
-                //generujemy siec
-                net = GraphGenerator.generate(nodes, 0.3, 20, 30);
+                    //generujemy siec
+                    net = GraphGenerator.generate(nodes, 0.3, 20, 30);
 
-                //szukamy co najmniej TEST_MATRICES_COUNT
-                while (dmsWorking.countMatrices() < TEST_MATRICES_COUNT) {
-                    dmsWorking.clear();
-                    dms.clear();
-                    //generujemy duzo macierzy
-                    dms = ProblemGenerator.genDemandMatrices(net, 1000, 10, 100);
-                    //wybieramy losowo pewna ich czesc
-                    randDms = dms.getRandMatrices(700);
-                    //uzupelniamy przepustowosci sieci net tak aby byla spelniona
-                    //kazda siec z randDms
-                    ProblemGenerator.genNetwork(net, randDms);
-                    //usuwa macierze ktore posluzyly do tworzenia sieci
-                    for (DemandMatrix dm : randDms.getMatrices()) {
-                        dms.removeDemandMatrix(dm);
+                    //szukamy co najmniej TEST_MATRICES_COUNT
+                    while (dmsWorking.countMatrices() < TEST_MATRICES_COUNT) {
+                        dmsWorking.clear();
+                        dms.clear();
+                        //generujemy duzo macierzy
+                        dms = ProblemGenerator.genDemandMatrices(net, 1000, 10, 100);
+                        //wybieramy losowo pewna ich czesc
+                        randDms = dms.getRandMatrices(700);
+                        //uzupelniamy przepustowosci sieci net (prezpustowosci krawedzi) tak aby byla spelniona
+                        //kazda siec z randDms
+                        ProblemGenerator.genNetwork(net, randDms);
+                        //usuwa macierze ktore posluzyly do tworzenia sieci
+                        //dzieki temu algorytm nie bedzie prezklamywał wyników (inaczej mialby kilka macierzy
+                        //ktore na pewno sa prosto rozwiazywalne)
+                        for (DemandMatrix dm : randDms.getMatrices()) {
+                            dms.removeDemandMatrix(dm);
+                        }
+                        //wyluskuje te ktore sa spelnialne dla sieci
+                        if (Algorithm.extractWorkingMatrices(net, dms, dmsWorking, true, false) == null) {
+                            continue;
+                        }
                     }
-                    //wyluskuje te ktore sa spelnialne dla sieci
-                    if (Algorithm.extractWorkingMatrices(net, dms, dmsWorking, true, false) == null) {
+                    //mozemy miec wiecej macierzy spelniajacych graf, wyluskujemy stala ilosc dla kazdej sieci
+                    dmsWorking = dmsWorking.getSubDemandMatrices(TEST_MATRICES_COUNT);
+
+                    ProblemGenerator.genNetwork(net, randDms);
+                    //wyszukujemy routing z macierzy zapotrzebowan ktore nie byly brane pod uwage
+                    //pryz ustalaniu przepustowosci na grafie
+                    routing = Algorithm.findRouting(net, dmsWorking.getRandMatrices(TEST_MATRICES_COUNT), false, null, false);
+                    if (routing == null) {
+                        //nie znaleziono routingu dla tych macierzy
+                        //siec jest nierozwiazywalna dla tych macierzy zapotrzebowan
                         continue;
                     }
-                }
-                dmsWorking = dmsWorking.getSubDemandMatrices(TEST_MATRICES_COUNT);
-
-                ProblemGenerator.genNetwork(net, randDms);
-                //wyszukujemy routing z macierzy zapotrzebowan ktore nie byly brane pod uwage
-                //pryz ustalaniu przepustowosci na grafie
-                routing = Algorithm.findRouting(net, dmsWorking.getRandMatrices(TEST_MATRICES_COUNT), true, null, false);
-                if (routing == null) {
-                    //nie znaleziono routingu dla tych macierzy
-                    //siec jest nierozwiazywalna dla tych macierzy zapotrzebowan
-                    continue;
-                }
-                x++;
-                Stat.addStatistics(net);
-                ProblemGenerator.genNetwork(net, randDms);
-                //sprawdzamy czy napewno wyszukany routing jest prawidlowy dla tej sieci
-                if (Algorithm.checkRouting(net, dmsWorking, false, null, false, routing) == false) {
+                    x++;
+                    Stat.addStatistics(net);
                     ProblemGenerator.genNetwork(net, randDms);
-                    Algorithm.checkRouting(net, dmsWorking, false, null, true, routing);
-                    throw new Exception("Algorytm okreslil nieprawidlowy routing!");
-                }
+                    //sprawdzamy czy napewno wyszukany routing jest prawidlowy dla tej sieci
+                    if (Algorithm.checkRouting(net, dmsWorking, false, null, false, routing) == false) {
+                        ProblemGenerator.genNetwork(net, randDms);
+                        Algorithm.checkRouting(net, dmsWorking, false, null, true, routing);
+                        throw new Exception("Algorytm okreslil nieprawidlowy routing!");
+                    }
 
-                //System.out.println("wezlow: " + nodes);
-                //System.out.println("z nowymi sciezkami: " + Algorithm.againCounter);
- 
-            	}
-            	nodes++;
-            	//System.out.print("STAT");
+                    //System.out.println("wezlow: " + nodes);
+//                    System.out.println("z nowymi sciezkami: " + Algorithm.againCounter);
+
+                }
+                nodes++;
+                //System.out.print("STAT");
                 Stat.generateStatistics(fileStream);
 
             }
@@ -121,13 +124,16 @@ public class Main {
         }
 
         //System.out.println("STAT:\n");
-        //Stat.generateStatistics();
+//        Stat.generateStatistics();
     }
 
 //  public static void main(String[] args) {
 //	System.out.println("Graf:\n");
 //	Algorithm.printGraph(GraphGenerator.generate(20, 0.1, 20, 30)); //GraphGenerator.generate(10, 0.1);
 //}
+    /*
+     * oporocz generowaina sieci mamy mozliwosc wczytania jej z pliku
+     */
     static public void loadConfig(String filename, Network network, DemandMatrices matrices, boolean onlyGraph) throws Exception {
         FileReader fr = null;
         try {
