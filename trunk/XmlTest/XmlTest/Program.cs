@@ -55,6 +55,7 @@ namespace XmlTest
 
         public Node(string id)
         {
+            this.id = id;
         }
 
         public Node()
