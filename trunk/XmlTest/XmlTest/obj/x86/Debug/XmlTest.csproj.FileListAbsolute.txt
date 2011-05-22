@@ -1,6 +1,0 @@
-D:\studia\gis\XmlTest\XmlTest\bin\Debug\XmlTest.exe
-D:\studia\gis\XmlTest\XmlTest\bin\Debug\XmlTest.pdb
-D:\studia\gis\XmlTest\XmlTest\bin\Debug\QuickGraph.dll
-D:\studia\gis\XmlTest\XmlTest\obj\x86\Debug\ResolveAssemblyReference.cache
-D:\studia\gis\XmlTest\XmlTest\obj\x86\Debug\XmlTest.exe
-D:\studia\gis\XmlTest\XmlTest\obj\x86\Debug\XmlTest.pdb
