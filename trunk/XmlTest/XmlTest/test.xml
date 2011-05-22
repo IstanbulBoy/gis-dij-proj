@@ -18,10 +18,10 @@
         <default>0.0</default>
     </key>
     <key id="name" for="graph" attr.name="name" attr.type="string"/>
-    <key id="size" for="graph" attr.name="size" attr.type="int"/>
+    <key id="size" for="graph" attr.name="size" attr.type="int" />
     <graph id="G" edgedefault="undirected" parse.nodes="11" parse.edges="12" parse.order="nodesfirst" parse.size="11" name="grafA">
-        <data id="name">Graf</data>
-        <data id="size">1</data>
+        <data key="name">Graf</data>
+        <data key="size">1</data>
         <node id="n0">
             <data key="3D">2.1 0.5 9.8</data>
             <data key="color">red</data>

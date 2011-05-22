@@ -12,34 +12,46 @@ using QuickGraph.Algorithms;
 
 namespace XmlTest
 {
-    class MyEdge : Edge<string>
+    class MyAdjacencyGraph : AdjacencyGraph<Node, MyEdge>
+    {
+        [XmlAttribute("name")]
+        public string name { get; set; }
+        [XmlAttribute("size")]
+        public int size { set; get; }
+    }
+
+    class MyEdge : Edge<Node>
     {
         [XmlAttribute("label")]
         public string label { get; set; }
         [XmlAttribute("color")]
         public string color { set; get; }
         [XmlAttribute("flag")]
-        public string flag { set; get; }
+        public int flag { set; get; }
+        [XmlAttribute("weight")]
+        public double weight { set; get; }
 
-        //public MyEdge(Node source, Node target)
-        //    : base(source.id, target.id)
-        //{
-
-        //}
-
-        public MyEdge(string source, string target)
+        public MyEdge(Node source, Node target)
             : base(source, target)
         {
 
         }
     }
-
+    
     class Node
     {
         [XmlAttribute("id")]
         public string id { set; get; }
         [XmlAttribute("label")]
         public string label { set; get; }
+        [XmlAttribute("color")]
+        public string color { set; get; }
+        [XmlAttribute("2D")]
+        public string _2D { set; get; }
+        [XmlAttribute("3D")]
+        public string _3D { set; get; }
+        [XmlAttribute("nD")]
+        public string nD { set; get; }
 
         public Node(string id)
         {
@@ -56,21 +68,15 @@ namespace XmlTest
     {
         static void Main(string[] args)
         {
-            var g = new AdjacencyGraph<string, MyEdge>();
+            var g = new MyAdjacencyGraph();
 
             using (var xreader = XmlReader.Create("../../test.xml"))
             {
-                g.DeserializeFromGraphML(xreader, id => id, (source, target, id) => new MyEdge(source, target));
+                g.DeserializeFromGraphML(xreader, id => new Node(id), (source, target, id) => new MyEdge(source, target));
             }
 
             Console.WriteLine(g.EdgeCount);
             Console.WriteLine(g.VertexCount);
-
-            //g.AddVertex("n11");
-            //g.AddVertex("n12");
-
-            //g.AddEdge(new Edge<string>("n0", "n11"));
-            //g.AddEdge(new Edge<string>("n11", "n10"));
 
             using (var xwriter = XmlWriter.Create("../../testwrite.xml"))
                 g.SerializeToGraphML(xwriter, AlgorithmExtensions.GetVertexIdentity(g), AlgorithmExtensions.GetEdgeIdentity(g));
