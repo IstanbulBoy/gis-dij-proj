@@ -88,7 +88,7 @@ public partial class _Default : System.Web.UI.Page
             }
             else if (algType == "1")
             {
-                //
+                results = tspAlgorithm.GetBBAlg(matrix, startNode);
             }
             else if (algType == "2")
             {
