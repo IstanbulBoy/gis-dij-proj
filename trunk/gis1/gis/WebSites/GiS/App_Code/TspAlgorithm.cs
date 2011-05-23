@@ -8,10 +8,98 @@ using System.Web;
 /// </summary>
 public class TspAlgorithm
 {
-    const int INF = 2147483647;
+    public static int INF = 2147483647;
     double bestResult = INF;
     int[] bestPath;
     int[] result;
+    BBAlgorithm bbAlg = new BBAlgorithm();
+
+    public List<object> GetBBAlg(double[,] matrix, int startNode)
+    {
+        result = new int[matrix.GetLength(1)];
+        bestPath = new int[matrix.GetLength(1)];
+
+        DateTime ExecutionStartTime;
+        DateTime ExecutionStopTime;
+        TimeSpan ExecutionTime;
+
+        bbAlg.setupAlg(matrix);
+
+        ExecutionStartTime = DateTime.Now;
+        bbAlg.tspPath(startNode);
+        GetPermutation(matrix, startNode, 1);
+        ExecutionStopTime = DateTime.Now;
+
+        ExecutionTime = ExecutionStopTime.Subtract(ExecutionStartTime);
+
+        List<object> results = new List<object>();
+        results.Add(bestResult);
+        string bestPathString = "";
+        for (int i = 0; i < bestPath.Length; i++)
+        {
+            bestPathString += (bestPath[i] + 1).ToString();
+            bestPathString += ",";
+        }
+        bestPathString += (bestPath[0] + 1).ToString();
+        results.Add(bestPathString);
+        results.Add(ExecutionTime.TotalSeconds.ToString() + " sec.");
+        //nie znaleziono rozwiazania
+        if (bestResult == INF)
+        {
+            results.Add("noresult");
+        }
+        else
+        {
+            results.Add("result");
+        }
+        return results;
+    }
+
+    public List<object> GetBBMeasurement(List<double[,]> matrixList, int startNode, int repeat)
+    {
+        int count = 0;
+        int iterator = 0;
+        List<object> results = new List<object>();
+        double pathResult = 0;
+        double timeResult = 0;
+
+        do
+        {
+            DateTime ExecutionStartTime;
+            DateTime ExecutionStopTime;
+            TimeSpan ExecutionTime;
+
+            result = new int[matrixList[iterator].GetLength(1)];
+            bestPath = new int[matrixList[iterator].GetLength(1)];
+            bestResult = INF;
+
+            bbAlg.setupAlg(matrixList[iterator]);
+
+            ExecutionStartTime = DateTime.Now;
+
+            bbAlg.tspPath(startNode);
+
+            ExecutionStopTime = DateTime.Now;
+
+            ExecutionTime = ExecutionStopTime.Subtract(ExecutionStartTime);
+            iterator++;
+
+            if (bestResult != INF)
+            {
+                pathResult += bestResult;
+                timeResult += ExecutionTime.TotalMilliseconds;
+                count++;
+            }
+
+        } while (count < repeat && iterator != repeat * 2);
+
+        pathResult = pathResult / count;
+        timeResult = timeResult / count;
+
+        results.Add(pathResult);
+        results.Add(timeResult);
+        return results;
+    }
 
     /// <summary>
     /// Zwraca wyniki dla wyliczenia wszystkich permutacji dla TSP grafu
@@ -39,10 +127,10 @@ public class TspAlgorithm
         string bestPathString = "";
         for (int i = 0; i < bestPath.Length; i++)
         {
-            bestPathString += (bestPath[i]+1).ToString();
+            bestPathString += (bestPath[i] + 1).ToString();
             bestPathString += ",";
         }
-        bestPathString += (bestPath[0]+1).ToString();
+        bestPathString += (bestPath[0] + 1).ToString();
         results.Add(bestPathString);
         results.Add(ExecutionTime.TotalSeconds.ToString() + " sec.");
         //nie znaleziono rozwiazania
@@ -54,7 +142,7 @@ public class TspAlgorithm
         {
             results.Add("result");
         }
-        return results; 
+        return results;
     }
 
     public List<object> GetPermutationMeasurement(List<double[,]> matrixList, int startNode, int repeat)
@@ -74,7 +162,7 @@ public class TspAlgorithm
             result = new int[matrixList[iterator].GetLength(1)];
             bestPath = new int[matrixList[iterator].GetLength(1)];
             bestResult = INF;
-            
+
             ExecutionStartTime = DateTime.Now;
             GetPermutation(matrixList[iterator], startNode, 1);
             ExecutionStopTime = DateTime.Now;
@@ -89,7 +177,7 @@ public class TspAlgorithm
                 count++;
             }
 
-        } while (count < repeat && iterator != repeat*2);
+        } while (count < repeat && iterator != repeat * 2);
 
         pathResult = pathResult / count;
         timeResult = timeResult / count;
@@ -237,7 +325,7 @@ public class TspAlgorithm
             result = new int[matrixList[iterator].GetLength(1)];
             bestPath = new int[matrixList[iterator].GetLength(1)];
             bestResult = INF;
-            
+
             ExecutionStartTime = DateTime.Now;
             GreedyAlgorithm(matrixList[iterator], startNode);
             ExecutionStopTime = DateTime.Now;
@@ -252,7 +340,7 @@ public class TspAlgorithm
                 count++;
             }
 
-        } while (count < repeat && iterator != repeat*2);
+        } while (count < repeat && iterator != repeat * 2);
 
         pathResult = pathResult / count;
         timeResult = timeResult / count;
@@ -271,7 +359,7 @@ public class TspAlgorithm
         List<int[]> wrongPath = new List<int[]>();
         bool isWrongPath = true;
         int[] result;
-        
+
         do
         {
             result = new int[nodesConut];

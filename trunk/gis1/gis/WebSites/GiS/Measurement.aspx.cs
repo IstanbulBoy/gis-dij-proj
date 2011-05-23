@@ -58,7 +58,7 @@ public partial class Measurement : System.Web.UI.Page
             }
             else if (algType == "1")
             {
-                //
+                results = tspAlgorithm.GetBBMeasurement(matrixList, 0, Int32.Parse(tbRepeat.Text));
             }
             else if (algType == "2")
             {
