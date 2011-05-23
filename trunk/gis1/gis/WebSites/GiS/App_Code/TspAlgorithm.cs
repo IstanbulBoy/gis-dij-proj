@@ -23,9 +23,8 @@ public class TspAlgorithm
         DateTime ExecutionStopTime;
         TimeSpan ExecutionTime;
 
-        bbAlg.setupAlg(matrix);
-
         ExecutionStartTime = DateTime.Now;
+        bbAlg.setupAlg(matrix);
         bbAlg.tspPath(startNode);
         GetPermutation(matrix, startNode, 1);
         ExecutionStopTime = DateTime.Now;
@@ -35,12 +34,11 @@ public class TspAlgorithm
         List<object> results = new List<object>();
         results.Add(bestResult);
         string bestPathString = "";
-        for (int i = 0; i < bestPath.Length; i++)
+        foreach (int n in bbAlg.bestList)
         {
-            bestPathString += (bestPath[i] + 1).ToString();
-            bestPathString += ",";
+            bestPathString += n.ToString();
         }
-        bestPathString += (bestPath[0] + 1).ToString();
+
         results.Add(bestPathString);
         results.Add(ExecutionTime.TotalSeconds.ToString() + " sec.");
         //nie znaleziono rozwiazania
@@ -73,11 +71,9 @@ public class TspAlgorithm
             bestPath = new int[matrixList[iterator].GetLength(1)];
             bestResult = INF;
 
-            bbAlg.setupAlg(matrixList[iterator]);
-
             ExecutionStartTime = DateTime.Now;
 
-            bbAlg.tspPath(startNode);
+            GetBBAlg(matrixList[iterator], startNode);
 
             ExecutionStopTime = DateTime.Now;
 
